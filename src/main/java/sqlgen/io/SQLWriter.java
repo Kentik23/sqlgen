@@ -1,4 +1,6 @@
-import sqlgen.SQLFile;
+package sqlgen.io;
+
+import sqlgen.entity.SQLFile;
 
 import java.io.File;
 import java.io.FileWriter;

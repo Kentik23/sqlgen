@@ -1,4 +1,4 @@
-package sqlgen;
+package sqlgen.entity;
 
 public class SQLFile {
     private final String relativePath;
