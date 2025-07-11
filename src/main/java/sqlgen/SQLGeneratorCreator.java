@@ -1,5 +1,6 @@
 package sqlgen;
 
+import sqlgen.config.AppConfig;
 import sqlgen.entity.SQLGenerator;
 
 public class SQLGeneratorCreator {
