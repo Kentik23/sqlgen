@@ -107,7 +107,7 @@ public class PDMParser {
                 table.getColumns()
                         .stream()
                         .map(Column::getCode)
-                        .collect(Collectors.toList()));
+                        .toList());
         return columns;
     }
 
