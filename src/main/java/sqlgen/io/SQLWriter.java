@@ -14,7 +14,7 @@ public class SQLWriter {
         this.sqlFiles = sqlFiles;
     }
 
-    public void saveAs(String rootFolderPath) {
+    public void saveAs(String rootFolderPath) throws SaveFileException {
         for (SQLFile sqlFile : sqlFiles) {
             File targetFile = new File(rootFolderPath, sqlFile.getRelativePath());
             File parentDir = targetFile.getParentFile();
@@ -29,8 +29,7 @@ public class SQLWriter {
                 writer.write(sqlFile.getContent());
                 System.out.println("Saved: " + targetFile.getAbsolutePath());
             } catch (IOException e) {
-                System.err.println("Failed to write: " + targetFile.getAbsolutePath());
-                e.printStackTrace();
+                throw new SaveFileException(e);
             }
         }
     }
