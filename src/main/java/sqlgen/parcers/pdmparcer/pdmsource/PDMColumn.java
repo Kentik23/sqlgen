@@ -1,26 +1,17 @@
-package sqlgen.entity.pdmsource;
+package sqlgen.parcers.pdmparcer.pdmsource;
 
-public class Column {
-    private String id;
-    private String name;
+import sqlgen.entity.baseEntity.ColumnBase;
+
+public class PDMColumn implements ColumnBase {
     private String code;
     private String dataType;
     private String length;
     private String precision;
     private String mandatory;
     private String comment;
-    private boolean primaryKey;
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public void setDataType(String dataType) {
@@ -47,17 +38,13 @@ public class Column {
         this.comment = comment;
     }
 
-    public void setPrimaryKey(boolean primaryKey) {
-        this.primaryKey = primaryKey;
-    }
+
 
     @Override
     public String toString() {
         return "\n  Column{" +
-                "name='" + name + '\'' +
                 ", code='" + code + '\'' +
                 ", length=" + length +
-                ", PK=" + primaryKey +
                 '}';
     }
 
