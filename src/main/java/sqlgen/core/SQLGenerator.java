@@ -1,4 +1,4 @@
-package sqlgen.entity;
+package sqlgen.core;
 
 import java.util.List;
 

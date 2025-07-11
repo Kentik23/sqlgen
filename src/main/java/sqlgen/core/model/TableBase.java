@@ -1,6 +1,4 @@
-package sqlgen.entity.baseEntity;
-
-import sqlgen.parcers.pdmparcer.pdmsource.PDMColumn;
+package sqlgen.core.model;
 
 import java.util.ArrayList;
 import java.util.List;

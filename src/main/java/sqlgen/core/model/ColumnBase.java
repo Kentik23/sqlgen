@@ -1,4 +1,4 @@
-package sqlgen.entity.baseEntity;
+package sqlgen.core.model;
 
 public interface ColumnBase {
     String code = "";

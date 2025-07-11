@@ -10,8 +10,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import sqlgen.entity.baseEntity.ColumnBase;
-import sqlgen.entity.baseEntity.TableBase;
 import sqlgen.parcers.Parcer;
 import sqlgen.parcers.pdmparcer.pdmsource.PDMColumn;
 import sqlgen.parcers.pdmparcer.pdmsource.PDMTable;

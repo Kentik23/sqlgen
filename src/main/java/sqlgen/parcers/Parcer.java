@@ -1,6 +1,5 @@
 package sqlgen.parcers;
 
-import sqlgen.entity.baseEntity.TableBase;
 import sqlgen.parcers.pdmparcer.pdmsource.PDMTable;
 
 import java.util.List;
