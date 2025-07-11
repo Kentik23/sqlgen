@@ -1,24 +1,25 @@
 package sqlgen.config;
 
-import sqlgen.SqlGeneratorApplication;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Properties;
 
 public class AppConfig extends Properties {
     private static final String APP_DIR = System.getProperty("user.dir");
     private static final String RELATIVE_CONFIG_PATH = "/config/app.properties";
-    private static final List<String> DEFAULT_KEYS = List.of(
-            "test",
-            "clickhouse.config",
-            "greenplum.config",
-            "postgresql.config"
-    );
+
+    private static final Map<String, String> DEFAULT_KEYS = new HashMap<>();
+
+    static {
+        DEFAULT_KEYS.put("test", "default_test_value");
+        DEFAULT_KEYS.put("clickhouse.config", "config/clickhouse.yaml");
+        DEFAULT_KEYS.put("greenplum.config", "config/greenplum.yaml");
+        DEFAULT_KEYS.put("postgresql.config", "config/postgresql.yaml");
+    }
 
     public AppConfig() throws IOException {
         parseConfig();
@@ -37,11 +38,10 @@ public class AppConfig extends Properties {
     }
 
     private void createDefaultConfig(File configFile) throws IOException {
-        // default values
-        this.setProperty("test", "default_test_value");
-        this.setProperty("clickhouse.config", "config/clickhouse.yaml");
-        this.setProperty("greenplum.config", "config/greenplum.yaml");
-        this.setProperty("postgresql.config", "config/postgresql.yaml");
+        // Задаём все пары ключ-значение из DEFAULT_KEYS
+        for (Map.Entry<String, String> entry : DEFAULT_KEYS.entrySet()) {
+            this.setProperty(entry.getKey(), entry.getValue());
+        }
 
         File parentDir = configFile.getParentFile();
         if (!parentDir.exists()) {
