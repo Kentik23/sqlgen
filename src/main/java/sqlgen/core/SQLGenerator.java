@@ -28,15 +28,20 @@ public abstract class SQLGenerator {
         return sqlFiles;
     }
 
-    private SQLFile wrapSql(String relativePath, String content) {
-        String relativePath = ;
+    private SQLFile wrapSql(String relativePath, String sqlScript) {
         StringBuilder content = new StringBuilder();
+        content.append(
+            "--liquibase formatted sql\n"
+                + "--changeset " + config.getUsername() + ":" + generateFileName() + " runInTransaction:true\n"
+        );
+
+
     }
 
-    private SQLFile getChangelogFiles(List<SQLFile> sqlFiles) {
-
+    private String generateFileName() {
+        return ":1-0-0-CD-" + config.getTaskNo() + "-init.sql";
     }
-
+    
     private SQLFile generateSQLMigrationFile(Schema schema, Table table) {
         String relativePath = schema.getCode() + '/' + table.getCode() + '/' + generateFileName();
         StringBuilder content = new StringBuilder();
@@ -45,23 +50,8 @@ public abstract class SQLGenerator {
 
         return new SQLFile(relativePath, content);
     }
+    
+    private SQLFile getChangelogFiles(List<SQLFile> sqlFiles) {
 
-    private String generateFileName() {
-        g
-    }
-
-
-    private
-
-    public void setConfig() {
-
-    }
-
-    public List<GPSchema> getSchemas() {
-        return schemas;
-    }
-
-    public void setSchemas(List<GPSchema> schemas) {
-        this.schemas = schemas;
     }
 }
