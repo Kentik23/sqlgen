@@ -1,5 +1,10 @@
 plugins {
     id("java")
+    application
+}
+
+application {
+    mainClass.set("sqlgen.App")
 }
 
 group = "org.example"
