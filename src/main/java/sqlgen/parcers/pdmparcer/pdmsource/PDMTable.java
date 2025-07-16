@@ -1,11 +1,9 @@
 package sqlgen.parcers.pdmparcer.pdmsource;
 
-import sqlgen.core.model.TableBase;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class PDMTable implements TableBase {
+public class PDMTable {
     private String code;
     private List<PDMColumn> columns = new ArrayList<>();
 
@@ -17,7 +15,6 @@ public class PDMTable implements TableBase {
         this.code = code;
     }
 
-    @Override
     public List<PDMColumn> getColumns() {
         return columns;
     }

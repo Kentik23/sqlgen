@@ -1,8 +1,6 @@
 package sqlgen.parcers.pdmparcer.pdmsource;
 
-import sqlgen.core.model.ColumnBase;
-
-public class PDMColumn implements ColumnBase {
+public class PDMColumn {
     private String code;
     private String dataType;
     private String length;
