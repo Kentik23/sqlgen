@@ -1,4 +1,4 @@
-package sqlgen.io;
+package sqlgen.core.io;
 
 import java.io.IOException;
 
