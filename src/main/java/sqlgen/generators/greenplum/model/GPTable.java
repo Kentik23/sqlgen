@@ -17,16 +17,49 @@ public class GPTable extends Table {
 
     @Override
     public String getAddColumnsScript(List<Column> columns) {
-        StringBuilder stringBuilder = new StringBuilder();
-
+        StringBuilder sb = new StringBuilder();
+    
+        String schema = this.getSchema().getCode();
+        String table = this.getCode();
+    
         for (Column column : columns) {
-            stringBuilder.append("alter table ").append(this.getSchema().getCode()).append('.')
-                    .append(this.getCode()).append(" add column ").append(column.getCode()).append(' ')
-                    .append(column.getDatatype()).append(' ').append(column.isMandatory() ? "not null " : "null ")
-                    .append("default ").append(column.getDefaultValue()).append(';').append('\n');
-            stringBuilder.append("--rollback alter table ").append(this.getSchema().getCode()).append('.')
-                    .append(this.getCode()).append(" drop column ").append(column.getCode()).append(';').append('\n').append('\n');
+            // основной alter table
+            sb.append("alter table ")
+                    .append(schema).append('.').append(table)
+                    .append(" add column ")
+                    .append(column.getCode()).append(' ')
+                    .append(column.getDatatype());
+    
+            if (column.isMandatory()) {
+                sb.append(" not null");
+            }
+    
+            if (column.getDefaultValue() != null) {
+                sb.append(" default ").append(column.getDefaultValue());
+            }
+    
+            sb.append(';').append('\n');
+    
+            // комментарий, если есть
+            if (column.getComment() != null && !column.getComment().isEmpty()) {
+                String safeComment = column.getComment().replace("'", "''");
+                sb.append("comment on column ")
+                        .append(schema).append('.').append(table).append('.')
+                        .append(column.getCode())
+                        .append(" is '").append(safeComment).append("';")
+                        .append('\n');
+            }
+    
+            // откат
+            sb.append("--rollback alter table ")
+                    .append(schema).append('.').append(table)
+                    .append(" drop column ")
+                    .append(column.getCode()).append(';')
+                    .append('\n').append('\n');
         }
-        return stringBuilder.toString();
+    
+        return sb.toString();
     }
+    
+    
 }
