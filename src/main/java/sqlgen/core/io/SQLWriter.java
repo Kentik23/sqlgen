@@ -6,13 +6,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class SQLWriter {
-    private final List<SQLFile> sqlFiles;
-
-    public SQLWriter(List<SQLFile> sqlFiles) {
-        this.sqlFiles = sqlFiles;
-    }
-
-    public void saveAs(String rootFolderPath) throws SaveFileException {
+    public void saveAs(List<SQLFile> sqlFiles,String rootFolderPath) throws SaveFileException {
         for (SQLFile sqlFile : sqlFiles) {
             File targetFile = new File(rootFolderPath, sqlFile.getRelativePath());
             File parentDir = targetFile.getParentFile();
