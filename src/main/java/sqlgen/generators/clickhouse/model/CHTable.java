@@ -1,15 +1,20 @@
 package sqlgen.generators.clickhouse.model;
 
 import sqlgen.core.model.Column;
+import sqlgen.core.model.Schema;
 import sqlgen.core.model.Table;
 
 import java.util.List;
 
 public class CHTable extends Table {
-    public CHTable(String code, String comment) {
-        super(code, comment);
+    public CHTable() {
+        
     }
 
+    public CHTable(Schema schema, String code, String comment, List<Column> columns, int lastMigrationNo) {
+        super(schema, code, code, columns, lastMigrationNo);
+    }
+    
     @Override
     public String getCreateScript() {
         return "";
