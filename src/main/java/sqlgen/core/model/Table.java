@@ -7,10 +7,17 @@ public abstract class Table {
     private String code;
     private String comment;
     private List<Column> columns;
+    private int lastMigrationNo;
 
-    public Table(String code, String comment) {
+    public Table() {
+    }
+
+    public Table(Schema schema, String code, String comment, List<Column> columns, int lastMigrationNo) {
+        this.schema = schema;
         this.code = code;
         this.comment = comment;
+        this.columns = columns;
+        this.lastMigrationNo = lastMigrationNo;
     }
 
     public String getCode() {
@@ -43,6 +50,14 @@ public abstract class Table {
 
     public void setSchema(Schema schema) {
         this.schema = schema;
+    }
+
+    public int getLastMigrationNo() {
+        return lastMigrationNo;
+    }
+
+    public void setLastMigrationNo(int lastMigrationNo) {
+        this.lastMigrationNo = lastMigrationNo;
     }
 
     public abstract String getCreateScript();
