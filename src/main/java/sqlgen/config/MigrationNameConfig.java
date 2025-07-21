@@ -1,4 +1,6 @@
 package sqlgen.config;
 
-public record MigrationNameConfig(String addColumnTemplate, String migrationNoFormat) {
-}
+public record MigrationNameConfig(
+    String fileNameTemplate,
+    String migrationNoFormat
+) {}

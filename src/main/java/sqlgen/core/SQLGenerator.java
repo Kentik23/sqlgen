@@ -45,7 +45,7 @@ public class SQLGenerator {
         for (Schema schema : schemas) {
             for (Table table : schema.getTables()) {
                 String filename = generateFileName(
-                        projectConfig.migrationNameConfig().addColumnTemplate(),
+                        projectConfig.migrationNameConfig().fileNameTemplate(),
                         projectConfig.migrationNameConfig().migrationNoFormat(),
                         table.getLastMigrationNo(),
                         "add-column"
@@ -98,7 +98,7 @@ public class SQLGenerator {
         String changelogName = this.generateFileName(projectConfig.changelogNameTemplate(), projectConfig.changelogNoFormat(), occ, actionName);
 
         masterContent.append(
-                "  - include:\n" +
+                "\n- include:\n" +
                         "    file: tasks/" + changelogName + "\n" +
                         "    relativeToChangelogFile: true"
         );

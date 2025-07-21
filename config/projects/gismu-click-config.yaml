@@ -1,0 +1,8 @@
+tableMigrationPathTemplate: "{schemePath}/{scheme}/tables/{table}/"
+schemePath: "src/main/ch/databases/default/schemas"
+migrationNameConfig:
+  fileNameTemplate: "{migrationNo}-CD-{taskNo}-{actionName}.sql"
+  migrationNoFormat: "%d-0-0"
+changelogPath: "src/main/ch/databases/default/_changelogs"
+changelogNameTemplate: "{taskNo}.yaml"
+changelogNoFormat: "%04d"
