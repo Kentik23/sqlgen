@@ -45,15 +45,13 @@ public class SqlGeneratorApplication {
                 appConfig.getTaskConfig()
             );
             
-            
-
             sqlFiles = sqlGenerator.addColumns(List.of(new GPSchema("cpig_stg", tables)), columns);
 
             SQLFile master = new SQLFile(
                 "src/main/ch/databases/default/_changelogs/master.yaml", 
                 "databaseChangeLog:\n" + 
-                "  - logicalFilePath: src/main/pg/_changelogs/master.yaml\n" +
-                "  - include:\n" +
+                "- logicalFilePath: src/main/pg/_changelogs/master.yaml\n" +
+                "- include:\n" +
                 "    file: tasks/0001-init-DITBIIG-6510.yaml\n" + 
                 "    relativeToChangelogFile: true");
 
