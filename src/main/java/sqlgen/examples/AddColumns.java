@@ -7,8 +7,8 @@ import sqlgen.core.io.SQLWriter;
 import sqlgen.core.model.Column;
 import sqlgen.core.model.Table;
 import sqlgen.generators.clickhouse.model.CHColumn;
+import sqlgen.generators.clickhouse.model.CHSchema;
 import sqlgen.generators.clickhouse.model.CHTable;
-import sqlgen.generators.greenplum.model.GPSchema;
 import sqlgen.parcers.ChangeLogParser;
 
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ public class AddColumns {
                 appConfig.getTaskConfig()
             );
             
-            sqlFiles = sqlGenerator.addColumns(List.of(new GPSchema("cpig_stg", tables)), columns);
+            sqlFiles = sqlGenerator.addColumns(List.of(new CHSchema("cpig_stg", tables)), columns);
 
             sqlGenerator.addChangelogFiles(sqlFiles, "add-column", ChangeLogParser.getMasterChangeLog(appConfig, appConfig.getProjectConfig().chConfig()));
 
