@@ -13,12 +13,12 @@ import java.util.List;
 
 public class SQLGenerator {
     private GeneratorConfig generatorConfig;
-    private DBConfig projectConfig;
+    private DBConfig dbConfig;
     private TaskConfig taskConfig;
 
-    public SQLGenerator(GeneratorConfig generatorConfig, DBConfig projectConfig, TaskConfig taskConfig) {
+    public SQLGenerator(GeneratorConfig generatorConfig, DBConfig dbConfig, TaskConfig taskConfig) {
         this.generatorConfig = generatorConfig;
-        this.projectConfig = projectConfig;
+        this.dbConfig = dbConfig;
         this.taskConfig = taskConfig;
     }
 
@@ -45,14 +45,14 @@ public class SQLGenerator {
         for (Schema schema : schemas) {
             for (Table table : schema.getTables()) {
                 String filename = generateFileName(
-                        projectConfig.migrationNameConfig().fileNameTemplate(),
-                        projectConfig.migrationNameConfig().migrationNoFormat(),
+                        dbConfig.migrationNameConfig().fileNameTemplate(),
+                        dbConfig.migrationNameConfig().migrationNoFormat(),
                         table.getLastMigrationNo(),
                         "add-column"
                 );
                 sqlFiles.add(
                         new SQLFile(
-                                this.buildFilePath(projectConfig.tableMigrationPathTemplate(), schema.getCode(), table.getCode())
+                                this.buildFilePath(dbConfig.tableMigrationPathTemplate(), schema.getCode(), table.getCode())
                                         + filename,
                                 this.wrapSql(filename, table.getAddColumnsScript(columns))
                         )
@@ -65,7 +65,7 @@ public class SQLGenerator {
 
     private String buildFilePath(String template, String schema, String table) {
         return template
-                .replace("{schemePath}", projectConfig.schemePath())
+                .replace("{schemePath}", dbConfig.schemePath())
                 .replace("{scheme}", schema)
                 .replace("{table}", table);
     }
@@ -95,7 +95,7 @@ public class SQLGenerator {
         String temp = s.replace(sub, "");
         int occ = (s.length() - temp.length()) / sub.length();
 
-        String changelogName = this.generateFileName(projectConfig.changelogNameTemplate(), projectConfig.changelogNoFormat(), occ, actionName);
+        String changelogName = this.generateFileName(dbConfig.changelogNameTemplate(), dbConfig.changelogNoFormat(), occ, actionName);
 
         masterContent.append(
                 "\n- include:\n" +
@@ -104,7 +104,7 @@ public class SQLGenerator {
         );
         SQLFile newMaster = new SQLFile(master.getRelativePath(), masterContent.toString());
         
-        String logicalFilePath = projectConfig.changelogPath() + "/tasks/" + changelogName;
+        String logicalFilePath = dbConfig.changelogPath() + "/tasks/" + changelogName;
         
         
         StringBuilder content = new StringBuilder();
