@@ -1,4 +1,4 @@
-package sqlgen;
+package sqlgen.examples;
 
 import sqlgen.config.AppConfig;
 import sqlgen.core.SQLGenerator;
@@ -6,21 +6,24 @@ import sqlgen.core.io.SQLFile;
 import sqlgen.core.io.SQLWriter;
 import sqlgen.core.model.Column;
 import sqlgen.core.model.Table;
-import sqlgen.generators.greenplum.model.GPColumn;
+import sqlgen.generators.clickhouse.model.CHColumn;
+import sqlgen.generators.clickhouse.model.CHTable;
 import sqlgen.generators.greenplum.model.GPSchema;
-import sqlgen.generators.greenplum.model.GPTable;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SqlGeneratorApplication {
-    public static void run() {
+public class AddColumns {
+    public static void main(String[] args) {
         try {
             AppConfig appConfig = new AppConfig();
             
             List<Table> tables = new ArrayList<>();
 
-            tables.add(new GPTable(
+            tables.add(new CHTable(
                     null,
                     "test_table",
                     null,
@@ -30,7 +33,7 @@ public class SqlGeneratorApplication {
 
             List<Column> columns = new ArrayList<>();
 
-            columns.add(new GPColumn(
+            columns.add(new CHColumn(
                     "queue_number",
                     "dIdint",
                     null,
@@ -41,24 +44,28 @@ public class SqlGeneratorApplication {
             List<SQLFile> sqlFiles;
             SQLGenerator sqlGenerator = new SQLGenerator(
                 null,
-                appConfig.getProjectConfig(),
+                appConfig.getProjectConfig().chConfig(),
                 appConfig.getTaskConfig()
             );
             
             sqlFiles = sqlGenerator.addColumns(List.of(new GPSchema("cpig_stg", tables)), columns);
 
+            String masterContent = null;
+            try {
+                masterContent = Files.readString(Path.of(
+                        appConfig.getProjectConfig().path(), appConfig.getProjectConfig().chConfig().changelogPath(), "master.yaml"
+                ));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             SQLFile master = new SQLFile(
-                "src/main/ch/databases/default/_changelogs/master.yaml", 
-                "databaseChangeLog:\n" + 
-                "- logicalFilePath: src/main/pg/_changelogs/master.yaml\n" +
-                "- include:\n" +
-                "    file: tasks/0001-init-DITBIIG-6510.yaml\n" + 
-                "    relativeToChangelogFile: true");
+                    Path.of(appConfig.getProjectConfig().chConfig().changelogPath(), "master.yaml").toString(),
+                    masterContent);
 
             sqlGenerator.addChangelogFiles(sqlFiles, "add-column", master);
 
             SQLWriter sqlWriter = new SQLWriter();
-            sqlWriter.saveAs(sqlFiles, "/home/alexey/projects/dwh");
+            sqlWriter.saveAs(sqlFiles, appConfig.getProjectConfig().path());
         } catch (Exception e) {
             e.printStackTrace(System.err);
             throw new RuntimeException();
