@@ -4,7 +4,7 @@ plugins {
 }
 
 application {
-    mainClass.set("sqlgen.App")
+    mainClass.set("sqlgen.examples.AddColumns")
 }
 
 group = "org.example"
