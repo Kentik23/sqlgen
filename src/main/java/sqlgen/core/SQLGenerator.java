@@ -22,6 +22,64 @@ public class SQLGenerator {
         this.taskConfig = taskConfig;
     }
 
+    private String buildFilePath(String template, String schema, String table) {
+        return template
+                .replace("{schemePath}", dbConfig.schemePath())
+                .replace("{scheme}", schema)
+                .replace("{table}", table);
+    }
+
+    private String wrapSql(String filename, String sqlScript) {
+        return "--liquibase formatted sql\n" +
+                "--changeset " + taskConfig.username() + ":" + filename + " runInTransaction:true\n\n" +
+                sqlScript;
+    }
+
+    private String generateFileName(String template, String migrationNoFormat, int prevMigrationNumber, String actionName) {
+        String migrationNo = String.format(migrationNoFormat, prevMigrationNumber + 1);
+
+        return template
+                .replace("{taskNo}", taskConfig.taskNo())
+                .replace("{migrationNo}", migrationNo)
+                .replace("{actionName}", actionName);
+    }
+
+    public void addChangelogFiles(List<SQLFile> sqlFiles, String actionName, SQLFile master) {
+        StringBuilder masterContent = new StringBuilder(master.getContent());
+
+        // Находим кол-во миграций))
+        String s = master.getContent();
+        String sub = "include";
+        String temp = s.replace(sub, "");
+        int occ = (s.length() - temp.length()) / sub.length();
+
+        String changelogName = this.generateFileName(dbConfig.changelogNameTemplate(), dbConfig.changelogNoFormat(), occ, actionName);
+
+        masterContent.append(
+                "\n- include:\n" +
+                        "    file: tasks/" + changelogName + "\n" +
+                        "    relativeToChangelogFile: true"
+        );
+        SQLFile newMaster = new SQLFile(master.getRelativePath(), masterContent.toString());
+
+        String logicalFilePath = dbConfig.changelogPath() + "/tasks/" + changelogName;
+
+
+        StringBuilder content = new StringBuilder();
+        content.append("databaseChangeLog:\n")
+                .append("  - logicalFilePath: ").append(logicalFilePath).append("\n");
+
+        for (SQLFile sqlFile : sqlFiles) {
+            content.append("  - include:\n")
+                    .append("      file: ").append(sqlFile.getRelativePath()).append("\n");
+        }
+
+        SQLFile changeLog = new SQLFile(logicalFilePath, content.toString());
+
+        sqlFiles.add(newMaster);
+        sqlFiles.add(changeLog);
+    }
+
 //    public List<SQLFile> createTables(List<GPSchema> schemas) {
 //        List<SQLFile> sqlFiles = new LinkedList<>();
 //
@@ -61,64 +119,5 @@ public class SQLGenerator {
         }
 
         return sqlFiles;
-    }
-
-    private String buildFilePath(String template, String schema, String table) {
-        return template
-                .replace("{schemePath}", dbConfig.schemePath())
-                .replace("{scheme}", schema)
-                .replace("{table}", table);
-    }
-
-
-    private String wrapSql(String filename, String sqlScript) {
-        return "--liquibase formatted sql\n" +
-                "--changeset " + taskConfig.username() + ":" + filename + " runInTransaction:true\n\n" +
-                sqlScript;
-    }
-
-    private String generateFileName(String template, String migrationNoFormat, int prevMigrationNumber, String actionName) {
-        String migrationNo = String.format(migrationNoFormat, prevMigrationNumber + 1);
-
-        return template
-                .replace("{taskNo}", taskConfig.taskNo())
-                .replace("{migrationNo}", migrationNo)
-                .replace("{actionName}", actionName);
-    }
-    
-    public void addChangelogFiles(List<SQLFile> sqlFiles, String actionName, SQLFile master) {
-        StringBuilder masterContent = new StringBuilder(master.getContent());
-
-        // Находим кол-во миграций))
-        String s = master.getContent();
-        String sub = "include";
-        String temp = s.replace(sub, "");
-        int occ = (s.length() - temp.length()) / sub.length();
-
-        String changelogName = this.generateFileName(dbConfig.changelogNameTemplate(), dbConfig.changelogNoFormat(), occ, actionName);
-
-        masterContent.append(
-                "\n- include:\n" +
-                        "    file: tasks/" + changelogName + "\n" +
-                        "    relativeToChangelogFile: true"
-        );
-        SQLFile newMaster = new SQLFile(master.getRelativePath(), masterContent.toString());
-        
-        String logicalFilePath = dbConfig.changelogPath() + "/tasks/" + changelogName;
-        
-        
-        StringBuilder content = new StringBuilder();
-        content.append("databaseChangeLog:\n")
-        .append("  - logicalFilePath: ").append(logicalFilePath).append("\n");
-        
-        for (SQLFile sqlFile : sqlFiles) {
-            content.append("  - include:\n")
-            .append("      file: ").append(sqlFile.getRelativePath()).append("\n");
-        }
-        
-        SQLFile changeLog = new SQLFile(logicalFilePath, content.toString());
-        
-        sqlFiles.add(newMaster);
-        sqlFiles.add(changeLog);
     }
 }
