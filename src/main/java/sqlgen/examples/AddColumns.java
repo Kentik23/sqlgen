@@ -9,10 +9,8 @@ import sqlgen.core.model.Table;
 import sqlgen.generators.clickhouse.model.CHColumn;
 import sqlgen.generators.clickhouse.model.CHTable;
 import sqlgen.generators.greenplum.model.GPSchema;
+import sqlgen.parcers.ChangeLogParser;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,19 +48,7 @@ public class AddColumns {
             
             sqlFiles = sqlGenerator.addColumns(List.of(new GPSchema("cpig_stg", tables)), columns);
 
-            String masterContent = null;
-            try {
-                masterContent = Files.readString(Path.of(
-                        appConfig.getProjectConfig().path(), appConfig.getProjectConfig().chConfig().changelogPath(), "master.yaml"
-                ));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            SQLFile master = new SQLFile(
-                    Path.of(appConfig.getProjectConfig().chConfig().changelogPath(), "master.yaml").toString(),
-                    masterContent);
-
-            sqlGenerator.addChangelogFiles(sqlFiles, "add-column", master);
+            sqlGenerator.addChangelogFiles(sqlFiles, "add-column", ChangeLogParser.getMasterChangeLog(appConfig, appConfig.getProjectConfig().chConfig()));
 
             SQLWriter sqlWriter = new SQLWriter();
             sqlWriter.saveAs(sqlFiles, appConfig.getProjectConfig().path());
