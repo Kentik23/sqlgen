@@ -80,22 +80,29 @@ public class SQLGenerator {
         sqlFiles.add(changeLog);
     }
 
-//    public List<SQLFile> createTables(List<GPSchema> schemas) {
-//        List<SQLFile> sqlFiles = new LinkedList<>();
-//
-//        for (Schema schema : schemas) {
-//            for (Table table : schema.getTables()) {
-//                sqlFiles.add(
-//                    new SQLFile(
-//                        schema.getCode() + '/' + table.getCode() + '/' + generateFileName(),
-//                        wrapSql(table.getCreateScript())
-//                    )
-//                );
-//            }
-//        }
-//
-//        return sqlFiles;
-//    }
+    public List<SQLFile> createTables(List<Schema> schemas) {
+        List<SQLFile> sqlFiles = new LinkedList<>();
+
+        for (Schema schema : schemas) {
+            for (Table table : schema.getTables()) {
+                String filename = generateFileName(
+                        dbConfig.migrationNameConfig().fileNameTemplate(),
+                        dbConfig.migrationNameConfig().migrationNoFormat(),
+                        table.getLastMigrationNo(),
+                        "create-table"
+                );
+                sqlFiles.add(
+                        new SQLFile(
+                                this.buildFilePath(dbConfig.tableMigrationPathTemplate(), schema.getCode(), table.getCode())
+                                        + filename,
+                                this.wrapSql(filename, table.getCreateScript())
+                        )
+                );
+            }
+        }
+
+        return sqlFiles;
+    }
 
     public List<SQLFile> addColumns(List<Schema> schemas, List<Column> columns) {
         List<SQLFile> sqlFiles = new LinkedList<>();

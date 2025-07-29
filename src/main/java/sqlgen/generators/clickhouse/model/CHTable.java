@@ -17,7 +17,68 @@ public class CHTable extends Table {
     
     @Override
     public String getCreateScript() {
-        return "";
+        StringBuilder sb = new StringBuilder();
+    
+        String database = this.getSchema().getCode();
+        String table = this.getCode();
+        List<Column> columns = this.getColumns();
+    
+        // Вычисление максимальной длины для выравнивания
+        int maxNameLen = 0;
+        int maxTypeLen = 0;
+    
+        for (Column col : columns) {
+            int nameLen = col.getCode().length();
+            int typeLen = col.isMandatory() ? col.getDatatype().length()
+                    : ("Nullable(" + col.getDatatype() + ")").length();
+    
+            if (nameLen > maxNameLen) maxNameLen = nameLen;
+            if (typeLen > maxTypeLen) maxTypeLen = typeLen;
+        }
+    
+        sb.append("create table if not exists ")
+          .append(database).append('.').append(table)
+          .append(" on cluster main (\n");
+    
+        for (int i = 0; i < columns.size(); i++) {
+            Column col = columns.get(i);
+    
+            String name = col.getCode();
+            String type = col.isMandatory()
+                    ? col.getDatatype()
+                    : "Nullable(" + col.getDatatype() + ")";
+            String defaultVal = col.getDefaultValue();
+            String comment = col.getComment();
+    
+            sb.append("    ")
+              .append(String.format("%-" + maxNameLen + "s", name)).append("   ")
+              .append(String.format("%-" + maxTypeLen + "s", type));
+    
+            if (defaultVal != null) {
+                sb.append("   default ").append(defaultVal);
+            }
+    
+            if (comment != null && !comment.isEmpty()) {
+                String safeComment = comment.replace("'", "\\'");
+                sb.append("   comment '").append(safeComment).append('\'');
+            }
+    
+            if (i < columns.size() - 1) {
+                sb.append(',');
+            }
+            sb.append('\n');
+        }
+    
+        sb.append(")\n")
+          .append("engine = MergeTree()\n")
+          .append("order by tuple();\n\n");
+    
+        // Роллбэк
+        sb.append("--rollback drop table if exists ")
+          .append(database).append('.').append(table)
+          .append(" on cluster main;\n");
+    
+        return sb.toString();
     }
 
     @Override
