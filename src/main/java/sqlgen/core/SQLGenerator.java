@@ -1,7 +1,7 @@
 package sqlgen.core;
 
 import sqlgen.config.GeneratorConfig;
-import sqlgen.config.ProjectConfig;
+import sqlgen.config.DBConfig;
 import sqlgen.config.TaskConfig;
 import sqlgen.core.io.SQLFile;
 import sqlgen.core.model.Column;
@@ -13,10 +13,10 @@ import java.util.List;
 
 public class SQLGenerator {
     private GeneratorConfig generatorConfig;
-    private ProjectConfig projectConfig;
+    private DBConfig projectConfig;
     private TaskConfig taskConfig;
 
-    public SQLGenerator(GeneratorConfig generatorConfig, ProjectConfig projectConfig, TaskConfig taskConfig) {
+    public SQLGenerator(GeneratorConfig generatorConfig, DBConfig projectConfig, TaskConfig taskConfig) {
         this.generatorConfig = generatorConfig;
         this.projectConfig = projectConfig;
         this.taskConfig = taskConfig;
