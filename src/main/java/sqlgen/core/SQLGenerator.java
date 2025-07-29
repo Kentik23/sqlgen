@@ -32,7 +32,7 @@ public class SQLGenerator {
     private String wrapSql(String filename, String sqlScript) {
         return "--liquibase formatted sql\n" +
                 "--changeset " + taskConfig.username() + ":" + filename + " runInTransaction:true\n\n" +
-                sqlScript;
+                sqlScript.trim();
     }
 
     private String generateFileName(String template, String migrationNoFormat, int prevMigrationNumber, String actionName) {
@@ -67,11 +67,11 @@ public class SQLGenerator {
 
         StringBuilder content = new StringBuilder();
         content.append("databaseChangeLog:\n")
-                .append("  - logicalFilePath: ").append(logicalFilePath).append("\n");
+                .append("  - logicalFilePath: ").append(logicalFilePath);
 
         for (SQLFile sqlFile : sqlFiles) {
-            content.append("  - include:\n")
-                    .append("      file: ").append(sqlFile.getRelativePath()).append("\n");
+            content.append("\n  - include:\n")
+                    .append("      file: ").append(sqlFile.getRelativePath());
         }
 
         SQLFile changeLog = new SQLFile(logicalFilePath, content.toString());

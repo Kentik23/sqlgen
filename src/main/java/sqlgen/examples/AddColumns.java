@@ -23,17 +23,17 @@ public class AddColumns {
 
             tables.add(new CHTable(
                     null,
-                    "test_table",
+                    "dim_age_group_hist",
                     null,
                     null,
-                    0
+                    2
             ));
 
             List<Column> columns = new ArrayList<>();
 
             columns.add(new CHColumn(
-                    "queue_number",
-                    "dIdint",
+                    "rosstat2_age_group_name",
+                    "String",
                     null,
                     "",
                     false
@@ -46,7 +46,7 @@ public class AddColumns {
                 appConfig.getTaskConfig()
             );
             
-            sqlFiles = sqlGenerator.addColumns(List.of(new CHSchema("cpig_stg", tables)), columns);
+            sqlFiles = sqlGenerator.addColumns(List.of(new CHSchema("dm_nsi", tables)), columns);
 
             sqlGenerator.addChangelogFiles(sqlFiles, "add-column", ChangeLogParser.getMasterChangeLog(appConfig, appConfig.getProjectConfig().chConfig()));
 
