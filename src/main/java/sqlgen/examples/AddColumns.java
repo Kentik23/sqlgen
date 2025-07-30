@@ -41,7 +41,6 @@ public class AddColumns {
 
             List<SQLFile> sqlFiles;
             SQLGenerator sqlGenerator = new SQLGenerator(
-                null,
                 appConfig.getProjectConfig().chConfig(),
                 appConfig.getTaskConfig()
             );

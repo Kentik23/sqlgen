@@ -52,7 +52,6 @@ public class CreateTables {
 
             List<SQLFile> sqlFiles;
             SQLGenerator sqlGenerator = new SQLGenerator(
-                null,
                 appConfig.getProjectConfig().chConfig(),
                 appConfig.getTaskConfig()
             );

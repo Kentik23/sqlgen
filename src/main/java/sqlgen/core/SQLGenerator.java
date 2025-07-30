@@ -1,6 +1,5 @@
 package sqlgen.core;
 
-import sqlgen.config.GeneratorConfig;
 import sqlgen.config.DBConfig;
 import sqlgen.config.TaskConfig;
 import sqlgen.core.io.SQLFile;
@@ -12,12 +11,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class SQLGenerator {
-    private GeneratorConfig generatorConfig;
     private DBConfig dbConfig;
     private TaskConfig taskConfig;
 
-    public SQLGenerator(GeneratorConfig generatorConfig, DBConfig dbConfig, TaskConfig taskConfig) {
-        this.generatorConfig = generatorConfig;
+    public SQLGenerator(DBConfig dbConfig, TaskConfig taskConfig) {
         this.dbConfig = dbConfig;
         this.taskConfig = taskConfig;
     }
