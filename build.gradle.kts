@@ -4,7 +4,7 @@ plugins {
 }
 
 application {
-    mainClass.set("sqlgen.examples.AddColumns")
+    mainClass.set("sqlgen.examples.CreateDictionaries")
 }
 
 group = "org.example"

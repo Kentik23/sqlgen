@@ -19,26 +19,42 @@ public class SQLGenerator {
         this.taskConfig = taskConfig;
     }
 
-    private String buildFilePath(String template, String schema, String table) {
+    protected String buildFilePath(String template, String schema, String table) {
         return template
                 .replace("{schemePath}", dbConfig.schemePath())
                 .replace("{scheme}", schema)
                 .replace("{table}", table);
     }
 
-    private String wrapSql(String filename, String sqlScript) {
+    protected String wrapSql(String filename, String sqlScript) {
         return "--liquibase formatted sql\n" +
                 "--changeset " + taskConfig.username() + ":" + filename + " runInTransaction:true\n\n" +
                 sqlScript.trim();
     }
 
-    private String generateFileName(String template, String migrationNoFormat, int prevMigrationNumber, String actionName) {
+    protected String generateFileName(String template, String migrationNoFormat, int prevMigrationNumber, String actionName) {
         String migrationNo = String.format(migrationNoFormat, prevMigrationNumber + 1);
 
         return template
                 .replace("{taskNo}", taskConfig.taskNo())
                 .replace("{migrationNo}", migrationNo)
                 .replace("{actionName}", actionName);
+    }
+
+    public DBConfig getDbConfig() {
+        return dbConfig;
+    }
+
+    public void setDbConfig(DBConfig dbConfig) {
+        this.dbConfig = dbConfig;
+    }
+
+    public TaskConfig getTaskConfig() {
+        return taskConfig;
+    }
+
+    public void setTaskConfig(TaskConfig taskConfig) {
+        this.taskConfig = taskConfig;
     }
 
     public void addChangelogFiles(List<SQLFile> sqlFiles, String actionName, SQLFile master) {
