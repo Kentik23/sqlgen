@@ -96,7 +96,7 @@ public class CHDictionary extends Table {
 
         sb.append("--rollback drop dictionary ")
                 .append(schema).append('.').append(dictName)
-                .append(" on cluster main;\n");
+                .append(" on cluster main sync;\n");
 
         return sb.toString();
     }
