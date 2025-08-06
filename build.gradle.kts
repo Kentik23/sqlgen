@@ -4,7 +4,7 @@ plugins {
 }
 
 application {
-    mainClass.set("sqlgen.examples.CreateDictionaries")
+    mainClass.set("sqlgen.examples.GISMUBI_28219")
 }
 
 group = "org.example"

@@ -99,7 +99,23 @@ public class GISMUBI_28219 {
 
             tables.add(new CHTable(
                     null,
+                    "dm_uni_stay_person_stg",
+                    null,
+                    null,
+                    2
+            ));
+
+            tables.add(new CHTable(
+                    null,
                     "dm_uni_stay_person_retrospective",
+                    null,
+                    null,
+                    2
+            ));
+
+            tables.add(new CHTable(
+                    null,
+                    "dm_uni_stay_person_retrospective_stg",
                     null,
                     null,
                     2
@@ -128,8 +144,27 @@ public class GISMUBI_28219 {
                     appConfig.getProjectConfig().chConfig(),
                     appConfig.getTaskConfig()
             );
-
             sqlFiles = sqlGenerator.addColumns(List.of(new CHSchema("dm_public", tables)), columns);
+            sqlFiles.addAll(sqlGenerator.addColumns(List.of(new CHSchema("dm_public", List.of(new CHTable(
+                    null,
+                    "dm_uni_stay_person_checklist",
+                    null,
+                    null,
+                    6
+            ),
+                    new CHTable(
+                            null,
+                            "dm_uni_stay_person_checklist_stg",
+                            null,
+                            null,
+                            6
+                    ) ))), List.of(new CHColumn(
+                    "rkl_bool",
+                    "Bool",
+                    "0",
+                    "Признак нахождения в РКЛ",
+                    true
+            ))));
 
             sqlGenerator.addChangelogFiles(sqlFiles, "add-column", ChangeLogParser.getMasterChangeLog(appConfig, appConfig.getProjectConfig().chConfig()));
 
