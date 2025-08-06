@@ -45,7 +45,7 @@ public class GISMUBI_28219 {
                     "dm_uni_stay_person_1126",
                     null,
                     null,
-                    3
+                    1
             ));
 
             List<Column> columns = new ArrayList<>();
