@@ -6,8 +6,14 @@
 #   taskNo - номер задания (Настраивается в task-config.yaml)
 #   actionName - краткое описание миграции
 
-#Путь к проекту
-path: "C:/Users/aleandivanov/pautina/dwh/"
+#Путь к папке с проектами (dwh, модели) ps всё в одной папке, надеюсь никто по другому не делает
+path: "C:/Users/aleandivanov/pautina/"
+
+#Относительный путь к проекту dwh
+dwhPath: "/dwh"
+
+#Относительный путь к проекту с моделями
+modelPath: "/data-model"
 
 # Настройки ClickHouse
 chConfig:
@@ -15,7 +21,7 @@ chConfig:
   schemePath: "src/main/ch/databases/default/schemas"
 
   # Шаблон пути до файла миграции таблицы (Можно указать schemePath, scheme, table)
-  tableMigrationPathTemplate: "{schemePath}/{scheme}/{table}/"
+  tableMigrationPathTemplate: "{schemePath}/{scheme}/tables/{table}/"
 
   # Настройки шаблона названия миграции
   migrationNameConfig:
