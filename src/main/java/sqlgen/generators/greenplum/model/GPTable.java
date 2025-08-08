@@ -6,12 +6,12 @@ import sqlgen.core.model.Table;
 
 import java.util.List;
 
-public class GPTable extends Table {
+public class GPTable extends Table<GPColumn> {
     public GPTable() {
         
     }
 
-    public GPTable(Schema schema, String code, String comment, List<Column> columns, int lastMigrationNo) {
+    public GPTable(Schema schema, String code, String comment, List<GPColumn> columns, int lastMigrationNo) {
         super(schema, code, code, columns, lastMigrationNo);
     }
     
@@ -21,7 +21,7 @@ public class GPTable extends Table {
     
         String schema = this.getSchema().getCode();
         String table = this.getCode();
-        List<Column> columns = this.getColumns();
+        List<GPColumn> columns = this.getColumns();
     
         // Вычисление максимальных длин
         int maxNameLen = 0;
@@ -84,7 +84,7 @@ public class GPTable extends Table {
     
 
     @Override
-    public String getAddColumnsScript(List<Column> columns) {
+    public String getAddColumnsScript(List<GPColumn> columns) {
         StringBuilder sb = new StringBuilder();
     
         String schema = this.getSchema().getCode();
