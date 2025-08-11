@@ -22,6 +22,10 @@ public class CHTable extends Table<CHColumn> {
         super(schema, code, comment, columns, lastMigrationNo);
     }
 
+    public CHTable(Table<? extends Column> table) {
+        super(table);
+    }
+
     @Override
     public String getCreateScript() {
         StringBuilder sb = new StringBuilder();

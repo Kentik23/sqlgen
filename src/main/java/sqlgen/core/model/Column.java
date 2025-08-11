@@ -16,6 +16,14 @@ public class Column {
         this.mandatory = mandatory;
     }
 
+    public Column(Column column) {
+        this.code = column.getCode();
+        this.datatype = column.getDatatype();
+        this.defaultValue = column.getDefaultValue();
+        this.comment = column.getComment();
+        this.mandatory = column.isMandatory();
+    }
+
     public String getCode() {
         return code;
     }

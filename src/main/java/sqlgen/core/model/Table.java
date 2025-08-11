@@ -20,6 +20,14 @@ public abstract class Table<C extends Column> {
         this.lastMigrationNo = lastMigrationNo;
     }
 
+    public Table(Table<? extends Column> table) {
+        this.schema = table.getSchema();
+        this.code = table.getCode();
+        this.comment = table.getComment();
+        this.columns = null;
+        this.lastMigrationNo = table.getLastMigrationNo();
+    }
+
     public String getCode() {
         return code;
     }
