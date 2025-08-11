@@ -2,131 +2,119 @@ package sqlgen.parcers.pdmparcer;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.file.Path;
+import java.util.*;
 
-import sqlgen.parcers.Parcer;
-import sqlgen.parcers.pdmparcer.pdmsource.PDMColumn;
-import sqlgen.parcers.pdmparcer.pdmsource.PDMTable;
+import sqlgen.config.ProjectConfig;
+import sqlgen.parcers.pdmparcer.model.PDMColumn;
+import sqlgen.parcers.pdmparcer.model.PDMTable;
 
-
-public class PDMParser implements Parcer {
-
-    private List<PDMTable> tables = new ArrayList<>();
-
-    public List<PDMTable> getTableBases() {
-        return tables;
+public class PDMParser {
+    private String getTagValue(Element parent, String localName) {
+        NodeList list = parent.getElementsByTagNameNS("*", localName);
+        if (list.getLength() > 0) {
+            return list.item(0).getTextContent().trim();
+        }
+        return "";
     }
 
-    public void main(String[] args) {
-        String pdmFilePath = "C:\\Users\\alyusmirnov\\Desktop\\bi_cpt.pdm";
+    public List<PDMTable> fillTables(ProjectConfig projectConfig, List<String> neededTables) {
+        String inputPdm = Path.of(projectConfig.path(), projectConfig.modelPath()).toString();
+        List<PDMTable> tables = new LinkedList<>();
+
         try {
-            tables = parseFile(pdmFilePath);
-            for(PDMTable table : tables){;
-                if (table.getColumns().isEmpty()){
-                    continue;
-                }
-                System.out.println(table.toString());
-                getColumnsCodeByColumns(tables.getFirst().getColumns()).forEach(System.out::println);
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(new File(inputPdm));
+
+            NodeList tableNodes = doc.getElementsByTagNameNS("*", "Table");
+
+            Map<String, Element> physicalDomains = new HashMap<>();
+            Map<String, Element> shortcuts = new HashMap<>();
+
+            // Сохраняем все PhysicalDomain по Id
+            NodeList domainNodes = doc.getElementsByTagNameNS("*", "PhysicalDomain");
+            for (int i = 0; i < domainNodes.getLength(); i++) {
+                Element dom = (Element) domainNodes.item(i);
+                String id = dom.getAttribute("Id");
+                physicalDomains.put(id, dom);
             }
+
+            // Сохраняем все Shortcut по Id
+            NodeList shortcutNodes = doc.getElementsByTagNameNS("*", "Shortcut");
+            for (int i = 0; i < shortcutNodes.getLength(); i++) {
+                Element sc = (Element) shortcutNodes.item(i);
+                String id = sc.getAttribute("Id");
+                shortcuts.put(id, sc);
+            }
+
+            for (int i = 0; i < tableNodes.getLength(); i++) {
+                Element pdmTable = (Element) tableNodes.item(i);
+
+                String tableCode = getTagValue(pdmTable, "Code");
+                if (!neededTables.contains(tableCode)) continue;
+                String tableComment = getTagValue(pdmTable, "Comment");
+                PDMTable table = new PDMTable(
+                        tableCode,
+                        tableComment
+                );
+
+                Element columnsContainer = (Element) pdmTable.getElementsByTagNameNS("*", "Columns").item(0);
+                NodeList pdmColumns = columnsContainer.getElementsByTagNameNS("*", "Column");
+                List<PDMColumn> columns = new LinkedList<>();
+
+                for (int j = 0; j < pdmColumns.getLength(); j++) {
+                    Element pdmColumn = (Element) pdmColumns.item(j);
+
+                    String colName = getTagValue(pdmColumn, "Code");
+                    String type = getTagValue(pdmColumn, "DataType");
+
+                    String domainCode = null;
+                    Element domainEl = (Element) pdmColumn.getElementsByTagNameNS("*", "Domain").item(0);
+                    if (domainEl != null) {
+                        Element physRef = (Element) domainEl.getElementsByTagNameNS("*", "PhysicalDomain").item(0);
+                        Element shortRef = (Element) domainEl.getElementsByTagNameNS("*", "Shortcut").item(0);
+
+                        if (physRef != null) {
+                            String refId = physRef.getAttribute("Ref");
+                            Element dom = physicalDomains.get(refId);
+                            if (dom != null) {
+                                domainCode = getTagValue(dom, "Name");
+                            }
+                        } else if (shortRef != null) {
+                            String refId = shortRef.getAttribute("Ref");
+                            Element shortcut = shortcuts.get(refId);
+                            if (shortcut != null) {
+                                domainCode = getTagValue(shortcut, "Name");
+                            }
+                        }
+                    }
+
+                    String comment = getTagValue(pdmColumn, "Name");
+                    String defaultValue = getTagValue(pdmColumn, "Default");
+
+                    columns.add(new PDMColumn(
+                            colName,
+                            type,
+                            defaultValue,
+                            !comment.isEmpty()? comment : null,
+                            !defaultValue.isEmpty()
+                    ));
+                }
+
+                table.setColumns(columns);
+                tables.add(table);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-
-    @Override
-    public List<PDMTable> parseFile(String filePath) throws Exception {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document document = builder.parse(new File(filePath));
-
-        List<PDMTable> tables = new ArrayList<>();
-        NodeList tableNodes = document.getElementsByTagName("o:Table");
-
-        for (int i = 0; i < tableNodes.getLength(); i++) {
-            Element tableElement = (Element) tableNodes.item(i);
-            PDMTable table = parseTable(tableElement);
-            if(table.getColumns().isEmpty()){
-                continue;
-            }
-            tables.add(table);
-        }
-        this.tables = tables;
 
         return tables;
     }
-
-    private PDMTable parseTable(Element tableElement) {
-        PDMTable table = new PDMTable();
-        // Извлекаем информацию о таблице
-        table.setCode(getElementText(tableElement, "a:Code"));
-        // Парсим колонки
-        NodeList columnNodes = tableElement.getElementsByTagName("o:Column");
-        for (int i = 0; i < columnNodes.getLength(); i++) {
-            Element columnElement = (Element) columnNodes.item(i);
-            PDMColumn column = parseColumn(columnElement);
-            if (column.getCode() == null){
-                continue;
-            }
-            table.addColumn(column);
-        }
-
-        return table;
-    }
-
-    private PDMColumn parseColumn(Element columnElement) {
-        PDMColumn column = new PDMColumn();
-        column.setCode(getElementText(columnElement, "a:Code"));
-        column.setDataType(getElementText(columnElement, "a:DataType"));
-        column.setLength(getElementText(columnElement, "a:Length"));
-        column.setPrecision(getElementText(columnElement, "a:Precision"));
-        column.setMandatory(getElementText(columnElement, "a:Mandatory"));
-        column.setComment(getElementText(columnElement, "a:Comment"));
-
-        return column;
-    }
-
-    private String getElementText(Element parent, String tagName) {
-        NodeList nodes = parent.getElementsByTagName(tagName);
-        if (nodes.getLength() > 0) {
-            Node node = nodes.item(0);
-            return node.getTextContent();
-        }
-        return null;
-    }
-
-    public List<PDMColumn> getColumnByTableCode(String tableCode){
-        for (PDMTable table: tables){
-            if(table.getCode().equals(tableCode)){
-                return table.getColumns();
-            }
-        }
-        return null;
-    }
-
-    public List<String> getColumnsCodeByColumns(List<PDMColumn> columns){
-        List<String> columnsCode = new ArrayList<>();
-        for (PDMColumn column: columns){
-            columnsCode.add(column.getCode());
-        }
-        return columnsCode;
-    }
-
-    public PDMTable getTableByCode(String tableCode){
-        for (PDMTable table: tables){
-            if(table.getCode().equals(tableCode)){
-                return table;
-            }
-        }
-        return null;
-    }
-
-
-
 }
