@@ -126,7 +126,7 @@ public class SQLGenerator {
                         dbConfig.migrationNameConfig().fileNameTemplate(),
                         dbConfig.migrationNameConfig().migrationNoFormat(),
                         table.getLastMigrationNo(),
-                        "add-column"
+                        "alter-table"
                 );
                 sqlFiles.add(
                         new SQLFile(

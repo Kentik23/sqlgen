@@ -1,0 +1,82 @@
+# Основные переменные, используемые в шаблонах:
+#   schemePath - путь до схемы (Настраивается здесь же)
+#   scheme - название схемы
+#   table - название таблицы
+#   migrationNo - порядковый номер миграции
+#   taskNo - номер задания (Настраивается в task-config.yaml)
+#   actionName - краткое описание миграции
+
+#Путь к проекту
+path: "C:/Users/aleandivanov/dit-ex/dwh"
+
+# Настройки ClickHouse
+chConfig:
+  # Путь до схемы относительно корня проекта
+  schemePath: "src/main/ch/databases/default/schemas"
+
+  # Шаблон пути до файла миграции таблицы (Можно указать schemePath, scheme, table)
+  tableMigrationPathTemplate: "{schemePath}/{scheme}/tables/{table}/"
+
+  # Настройки шаблона названия миграции
+  migrationNameConfig:
+    # Шаблон названия миграции (Можно указать migrationNo, taskNo, actionName)
+    fileNameTemplate: "{migrationNo}-CD-{taskNo}-{actionName}.sql"
+    # Формат номера миграции
+    migrationNoFormat: "%d-0-0"
+
+  # Путь до папки с changelogs относительно проекта
+  changelogPath: "src/main/ch/databases/default/_changelogs"
+
+  # Шаблон названия changelog (Можно указать migrationNo, taskNo, actionName)
+  changelogNameTemplate: "{taskNo}.yaml"
+
+  # Формат номера миграции
+  changelogNoFormat: "%04d"
+
+# Настройки GreenPlum
+gpConfig:
+  # Путь до схемы относительно корня проекта
+  schemePath: "src/main/gp/databases/dwh/schemas"
+
+  # Шаблон пути до файла миграции таблицы (Можно указать schemePath, scheme, table)
+  tableMigrationPathTemplate: "{schemePath}/{scheme}/tables/{table}/"
+
+  # Настройки шаблона названия миграции
+  migrationNameConfig:
+    # Шаблон названия миграции (Можно указать migrationNo, taskNo, actionName)
+    fileNameTemplate: "{migrationNo}-CD-{taskNo}-{actionName}.sql"
+    # Формат номера миграции
+    migrationNoFormat: "%d-0-0"
+
+  # Путь до папки с changelogs относительно проекта
+  changelogPath: "src/main/gp/databases/dwh/_changelogs"
+
+  # Шаблон названия changelog (Можно указать migrationNo, taskNo, actionName)
+  changelogNameTemplate: "{taskNo}.yaml"
+
+  # Формат номера миграции
+  changelogNoFormat: "%04d"
+
+# Настройки PostgreSQL
+pgConfig:
+  # Путь до схемы относительно корня проекта
+  schemePath: "src/main/pg/databases/dwh/schemas"
+
+  # Шаблон пути до файла миграции таблицы (Можно указать schemePath, scheme, table)
+  tableMigrationPathTemplate: "{schemePath}/{scheme}/tables/{table}/"
+
+  # Настройки шаблона названия миграции
+  migrationNameConfig:
+    # Шаблон названия миграции (Можно указать migrationNo, taskNo, actionName)
+    fileNameTemplate: "{migrationNo}-{actionName}-{taskNo}.sql"
+    # Формат номера миграции
+    migrationNoFormat: "%03d-000-000"
+
+  # Путь до папки с changelogs относительно проекта
+  changelogPath: "src/main/pg/_changelogs"
+
+  # Шаблон названия changelog (Можно указать migrationNo, taskNo, actionName)
+  changelogNameTemplate: "{migrationNo}-{actionName}-{taskNo}.yaml"
+
+  # Формат номера миграции
+  changelogNoFormat: "%04d"
