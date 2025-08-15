@@ -4,7 +4,7 @@ plugins {
 }
 
 application {
-    mainClass.set("sqlgen.examples.DITBIIG_7829")
+    mainClass.set("sqlgen.examples.GISMUBI_28290")
 }
 
 group = "org.example"

@@ -81,6 +81,22 @@ public class GISMUBI_28290 {
                     4
             ));
 
+            tables.add(new CHTable(
+                    null,
+                    "dm_labm_patent_stg",
+                    null,
+                    null,
+                    5
+            ));
+
+            tables.add(new CHTable(
+                    null,
+                    "dm_labm_patent_checklist_stg",
+                    null,
+                    null,
+                    4
+            ));
+
             List<Column> columns = new ArrayList<>();
 
             columns.add(new CHColumn(
