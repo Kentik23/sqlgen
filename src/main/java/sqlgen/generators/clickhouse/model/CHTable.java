@@ -1,7 +1,6 @@
 package sqlgen.generators.clickhouse.model;
 
 import sqlgen.core.model.Column;
-import sqlgen.core.model.Schema;
 import sqlgen.core.model.Table;
 
 import java.util.List;
@@ -13,13 +12,13 @@ public class CHTable extends Table<CHColumn> {
 
     }
 
-    public CHTable(Schema schema, String code, String comment, List<CHColumn> columns, int lastMigrationNo, boolean withDistributed) {
-        super(schema, code, comment, columns, lastMigrationNo);
+    public CHTable(String schemaCode, String code, String comment, List<CHColumn> columns, int lastMigrationNo, boolean withDistributed) {
+        super(schemaCode, code, comment, columns, lastMigrationNo);
         this.withDistributed = withDistributed;
     }
 
-    public CHTable(Schema schema, String code, String comment, List<CHColumn> columns, int lastMigrationNo) {
-        super(schema, code, comment, columns, lastMigrationNo);
+    public CHTable(String schemaCode, String code, String comment, List<CHColumn> columns, int lastMigrationNo) {
+        super(schemaCode, code, comment, columns, lastMigrationNo);
     }
 
     public CHTable(Table<? extends Column> table) {
@@ -30,7 +29,7 @@ public class CHTable extends Table<CHColumn> {
     public String getCreateScript() {
         StringBuilder sb = new StringBuilder();
 
-        String database = this.getSchema().getCode();
+        String database = this.getSchemaCode();
         String table = this.getCode();
         List<CHColumn> columns = this.getColumns();
         String tableComment = this.getComment();
@@ -73,12 +72,14 @@ public class CHTable extends Table<CHColumn> {
                     .append(String.format("%-" + maxNameLen + "s", name)).append("   ")
                     .append(String.format("%-" + maxTypeLen + "s", type));
 
-            if (defaultVal != null && !defaultVal.isEmpty()) {
-                sb.append("   ")
-                        .append(String.format("%-" + maxDefaultLen + "s", "default " + defaultVal));
-            } else {
-                sb.append("   ")
-                        .append(String.format("%-" + maxDefaultLen + "s", ""));
+            if (maxDefaultLen != 0) {
+                if (defaultVal != null && !defaultVal.isEmpty()) {
+                    sb.append("   ")
+                            .append(String.format("%-" + maxDefaultLen + "s", "default " + defaultVal));
+                } else {
+                    sb.append("   ")
+                            .append(String.format("%-" + maxDefaultLen + "s", ""));
+                }
             }
 
             if (comment != null && !comment.isEmpty()) {
@@ -128,7 +129,7 @@ public class CHTable extends Table<CHColumn> {
     public String getAddColumnsScript(List<CHColumn> columns) {
         StringBuilder sb = new StringBuilder();
 
-        String database = this.getSchema().getCode();
+        String database = this.getSchemaCode();
         String table = this.getCode();
 
         for (Column column : columns) {

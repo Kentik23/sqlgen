@@ -1,13 +1,12 @@
 package sqlgen.generators.clickhouse.model;
 
-import sqlgen.core.model.Column;
 import sqlgen.core.model.Schema;
 import sqlgen.core.model.Table;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CHDictionary extends Table {
+public class CHDictionary extends Table<CHColumn> {
 
     private CHColumn primaryKey;
     private String sourceDatabase;
@@ -16,16 +15,16 @@ public class CHDictionary extends Table {
     public CHDictionary() {}
 
     public CHDictionary(
-            Schema schema,
+            String schemaCode,
             String code,
             String comment,
-            List<Column> columns,
+            List<CHColumn> columns,
             int lastMigrationNo,
             CHColumn primaryKey,
             String sourceDatabase,
             String sourceTable
     ) {
-        super(schema, code, comment, new ArrayList<>(columns), lastMigrationNo);
+        super(schemaCode, code, comment, new ArrayList<>(columns), lastMigrationNo);
         this.getColumns().addFirst(primaryKey);
         this.primaryKey = primaryKey;
         this.sourceDatabase = sourceDatabase;
@@ -60,9 +59,9 @@ public class CHDictionary extends Table {
     public String getCreateScript() {
         StringBuilder sb = new StringBuilder();
 
-        String schema = getSchema().getCode();
+        String schema = getSchemaCode();
         String dictName = getCode();
-        List<sqlgen.core.model.Column> columns = getColumns();
+        List<CHColumn> columns = getColumns();
 
         sb.append("create or replace dictionary ")
                 .append(schema).append('.').append(dictName)
@@ -102,7 +101,7 @@ public class CHDictionary extends Table {
     }
 
     @Override
-    public String getAddColumnsScript(List<sqlgen.core.model.Column> columns) {
+    public String getAddColumnsScript(List<CHColumn> columns) {
         // Словари не поддерживают ALTER ADD COLUMN
         return "";
     }

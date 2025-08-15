@@ -1,7 +1,6 @@
 package sqlgen.generators.greenplum.model;
 
 import sqlgen.core.model.Column;
-import sqlgen.core.model.Schema;
 import sqlgen.core.model.Table;
 
 import java.util.List;
@@ -11,15 +10,15 @@ public class GPTable extends Table<GPColumn> {
         
     }
 
-    public GPTable(Schema schema, String code, String comment, List<GPColumn> columns, int lastMigrationNo) {
-        super(schema, code, code, columns, lastMigrationNo);
+    public GPTable(String schemaCode, String code, String comment, List<GPColumn> columns, int lastMigrationNo) {
+        super(schemaCode, code, code, columns, lastMigrationNo);
     }
     
     @Override
     public String getCreateScript() {
         StringBuilder sb = new StringBuilder();
     
-        String schema = this.getSchema().getCode();
+        String schema = this.getSchemaCode();
         String table = this.getCode();
         List<GPColumn> columns = this.getColumns();
     
@@ -87,7 +86,7 @@ public class GPTable extends Table<GPColumn> {
     public String getAddColumnsScript(List<GPColumn> columns) {
         StringBuilder sb = new StringBuilder();
     
-        String schema = this.getSchema().getCode();
+        String schema = this.getSchemaCode();
         String table = this.getCode();
     
         for (Column column : columns) {

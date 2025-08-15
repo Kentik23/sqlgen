@@ -93,11 +93,11 @@ public class SQLGenerator {
         sqlFiles.add(changeLog);
     }
 
-    public List<SQLFile> createTables(List<Schema> schemas) {
+    public List<SQLFile> createTables(List<Schema<? extends Table<? extends Column>>> schemas) {
         List<SQLFile> sqlFiles = new LinkedList<>();
 
-        for (Schema schema : schemas) {
-            for (Table table : schema.getTables()) {
+        for (Schema<? extends Table<? extends Column>> schema : schemas) {
+            for (Table<? extends Column> table : schema.getTables()) {
                 String filename = generateFileName(
                         dbConfig.migrationNameConfig().fileNameTemplate(),
                         dbConfig.migrationNameConfig().migrationNoFormat(),
@@ -117,11 +117,11 @@ public class SQLGenerator {
         return sqlFiles;
     }
 
-    public List<SQLFile> addColumns(List<Schema> schemas, List<Column> columns) {
+    public <C extends Column> List<SQLFile> addColumns(List<Schema<? extends Table<C>>> schemas, List<C> columns) {
         List<SQLFile> sqlFiles = new LinkedList<>();
 
-        for (Schema schema : schemas) {
-            for (Table table : schema.getTables()) {
+        for (Schema<? extends Table<C>> schema : schemas) {
+            for (Table<C> table : schema.getTables()) {
                 String filename = generateFileName(
                         dbConfig.migrationNameConfig().fileNameTemplate(),
                         dbConfig.migrationNameConfig().migrationNoFormat(),

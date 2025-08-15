@@ -3,7 +3,7 @@ package sqlgen.core.model;
 import java.util.List;
 
 public abstract class Table<C extends Column> {
-    private Schema schema;
+    private String schemaCode;
     private String code;
     private String comment;
     private List<C> columns;
@@ -12,8 +12,8 @@ public abstract class Table<C extends Column> {
     public Table() {
     }
 
-    public Table(Schema schema, String code, String comment, List<C> columns, int lastMigrationNo) {
-        this.schema = schema;
+    public Table(String schemaCode, String code, String comment, List<C> columns, int lastMigrationNo) {
+        this.schemaCode = schemaCode;
         this.code = code;
         this.comment = comment;
         this.columns = columns;
@@ -21,7 +21,7 @@ public abstract class Table<C extends Column> {
     }
 
     public Table(Table<? extends Column> table) {
-        this.schema = table.getSchema();
+        this.schemaCode = table.getSchemaCode();
         this.code = table.getCode();
         this.comment = table.getComment();
         this.columns = null;
@@ -52,14 +52,6 @@ public abstract class Table<C extends Column> {
         this.columns = columns;
     }
 
-    public Schema getSchema() {
-        return schema;
-    }
-
-    public void setSchema(Schema schema) {
-        this.schema = schema;
-    }
-
     public int getLastMigrationNo() {
         return lastMigrationNo;
     }
@@ -71,4 +63,12 @@ public abstract class Table<C extends Column> {
     public abstract String getCreateScript();
 
     public abstract String getAddColumnsScript(List<C> columns);
+
+    public String getSchemaCode() {
+        return schemaCode;
+    }
+
+    public void setSchemaCode(String schemaCode) {
+        this.schemaCode = schemaCode;
+    }
 }

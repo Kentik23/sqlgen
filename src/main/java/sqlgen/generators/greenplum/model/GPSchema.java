@@ -5,8 +5,8 @@ import sqlgen.core.model.Table;
 
 import java.util.List;
 
-public class GPSchema extends Schema {
-    public GPSchema(String code, List<Table> tables) {
+public class GPSchema extends Schema<GPTable> {
+    public GPSchema(String code, List<GPTable> tables) {
         super(code, tables);
     }
 }
