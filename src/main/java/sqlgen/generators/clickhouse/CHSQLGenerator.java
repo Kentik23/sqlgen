@@ -4,8 +4,8 @@ import sqlgen.config.DBConfig;
 import sqlgen.config.TaskConfig;
 import sqlgen.core.SQLGenerator;
 import sqlgen.core.io.SQLFile;
-import sqlgen.core.model.Schema;
-import sqlgen.core.model.Table;
+import sqlgen.generators.clickhouse.model.CHSchema;
+import sqlgen.generators.clickhouse.model.CHTable;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,11 +15,11 @@ public class CHSQLGenerator extends SQLGenerator {
         super(dbConfig, taskConfig);
     }
 
-    public List<SQLFile> createDictionaries(List<Schema> schemas) {
+    public List<SQLFile> createDictionaries(List<CHSchema> schemas) {
         List<SQLFile> sqlFiles = new LinkedList<>();
 
-        for (Schema schema : schemas) {
-            for (Table table : schema.getTables()) {
+        for (CHSchema schema : schemas) {
+            for (CHTable table : schema.getTables()) {
                 String filename = generateFileName(
                         getDbConfig().migrationNameConfig().fileNameTemplate(),
                         getDbConfig().migrationNameConfig().migrationNoFormat(),

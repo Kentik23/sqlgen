@@ -19,7 +19,7 @@ public class AddColumns {
         try {
             AppConfig appConfig = new AppConfig();
             
-            List<Table> tables = new ArrayList<>();
+            List<CHTable> tables = new ArrayList<>();
 
             tables.add(new CHTable(
                     null,
@@ -29,7 +29,7 @@ public class AddColumns {
                     2
             ));
 
-            List<Column> columns = new ArrayList<>();
+            List<CHColumn> columns = new ArrayList<>();
 
             columns.add(new CHColumn(
                     "rosstat2_age_group_name",

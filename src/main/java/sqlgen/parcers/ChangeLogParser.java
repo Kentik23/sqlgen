@@ -13,7 +13,7 @@ public class ChangeLogParser {
         String masterContent = null;
         try {
             masterContent = Files.readString(Path.of(
-                    appConfig.getProjectConfig().path(), dbConfig.changelogPath(), "master.yaml"
+                    appConfig.getProjectConfig().path(),appConfig.getProjectConfig().dwhPath(), dbConfig.changelogPath(), "master.yaml"
             ));
         } catch (IOException e) {
             throw new RuntimeException(e);

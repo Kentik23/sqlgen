@@ -2,15 +2,15 @@ package sqlgen.core.model;
 
 import java.util.List;
 
-public class Schema {
+public class Schema<T extends Table<? extends Column>> {
     private String code;
-    private List<Table> tables;
+    private List<T> tables;
 
-    public Schema(String code, List<Table> tables) {
+    public Schema(String code, List<T> tables) {
         this.code = code;
         this.tables = tables;
-        for (Table table : tables) {
-            table.setSchema(this);
+        for (T table : tables) {
+            table.setSchemaCode(this.getCode());
         }
     }
 
@@ -22,11 +22,11 @@ public class Schema {
         this.code = code;
     }
 
-    public List<Table> getTables() {
+    public List<T> getTables() {
         return tables;
     }
 
-    public void setTables(List<Table> tables) {
+    public void setTables(List<T> tables) {
         this.tables = tables;
     }
 }

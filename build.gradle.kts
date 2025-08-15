@@ -1,6 +1,7 @@
 plugins {
     id("java")
     application
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 application {
@@ -8,7 +9,7 @@ application {
 }
 
 group = "org.example"
-version = "1.0-SNAPSHOT"
+version = "0.0.2-pre-alpha"
 
 repositories {
     mavenCentral()

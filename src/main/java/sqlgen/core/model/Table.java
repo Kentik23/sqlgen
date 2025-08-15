@@ -2,22 +2,30 @@ package sqlgen.core.model;
 
 import java.util.List;
 
-public abstract class Table {
-    private Schema schema;
+public abstract class Table<C extends Column> {
+    private String schemaCode;
     private String code;
     private String comment;
-    private List<Column> columns;
+    private List<C> columns;
     private int lastMigrationNo;
 
     public Table() {
     }
 
-    public Table(Schema schema, String code, String comment, List<Column> columns, int lastMigrationNo) {
-        this.schema = schema;
+    public Table(String schemaCode, String code, String comment, List<C> columns, int lastMigrationNo) {
+        this.schemaCode = schemaCode;
         this.code = code;
         this.comment = comment;
         this.columns = columns;
         this.lastMigrationNo = lastMigrationNo;
+    }
+
+    public Table(Table<? extends Column> table) {
+        this.schemaCode = table.getSchemaCode();
+        this.code = table.getCode();
+        this.comment = table.getComment();
+        this.columns = null;
+        this.lastMigrationNo = table.getLastMigrationNo();
     }
 
     public String getCode() {
@@ -36,20 +44,12 @@ public abstract class Table {
         this.comment = comment;
     }
 
-    public List<Column> getColumns() {
+    public List<C> getColumns() {
         return columns;
     }
 
-    public void setColumns(List<Column> columns) {
+    public void setColumns(List<C> columns) {
         this.columns = columns;
-    }
-
-    public Schema getSchema() {
-        return schema;
-    }
-
-    public void setSchema(Schema schema) {
-        this.schema = schema;
     }
 
     public int getLastMigrationNo() {
@@ -62,5 +62,13 @@ public abstract class Table {
 
     public abstract String getCreateScript();
 
-    public abstract String getAddColumnsScript(List<Column> columns);
+    public abstract String getAddColumnsScript(List<C> columns);
+
+    public String getSchemaCode() {
+        return schemaCode;
+    }
+
+    public void setSchemaCode(String schemaCode) {
+        this.schemaCode = schemaCode;
+    }
 }
