@@ -13,7 +13,7 @@ path: "C:/Users/aleandivanov/pautina/"
 dwhPath: "/dwh"
 
 #Относительный путь к проекту с моделями
-modelPath: "/data-model"
+modelPath: "/data-model/subsystem/bi/ap/bi_ap.pdm"
 
 # Настройки ClickHouse
 chConfig:
