@@ -22,7 +22,7 @@ public class GISMUBI_28219 {
         try {
             AppConfig appConfig = new AppConfig();
 
-            List<Table> tables = new ArrayList<>();
+            List<GPTable> tables = new ArrayList<>();
 
             tables.add(new GPTable(
                     null,
@@ -48,7 +48,7 @@ public class GISMUBI_28219 {
                     1
             ));
 
-            List<Column> columns = new ArrayList<>();
+            List<GPColumn> columns = new ArrayList<>();
 
             columns.add(new GPColumn(
                     "checklist_bool",
@@ -87,7 +87,7 @@ public class GISMUBI_28219 {
         try {
             AppConfig appConfig = new AppConfig();
 
-            List<Table> tables = new ArrayList<>();
+            List<CHTable> tables = new ArrayList<>();
 
             tables.add(new CHTable(
                     null,
@@ -121,7 +121,7 @@ public class GISMUBI_28219 {
                     2
             ));
 
-            List<Column> columns = new ArrayList<>();
+            List<CHColumn> columns = new ArrayList<>();
 
             columns.add(new CHColumn(
                     "checklist_bool",
