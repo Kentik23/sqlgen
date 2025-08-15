@@ -1,2 +1,10 @@
-username: "aleandivanov"
-taskNo: "GISMUBI-28219"
+username: "kbitkina"
+taskNo: "PAUTINABI-999"
+
+generateChangelogs: false
+generateSTGTables: true
+generateDistributedTables: true
+
+schema: "dm_public"
+tablesList:
+  - "fct_delo"
