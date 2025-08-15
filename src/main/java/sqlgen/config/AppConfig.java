@@ -23,9 +23,7 @@ public class AppConfig extends Properties {
     static {
         DEFAULT_KEYS.put("project.config", "config/projects/example-project-config.yaml");
         DEFAULT_KEYS.put("task.config", "config/tasks/example-task-config.yaml");
-        DEFAULT_KEYS.put("clickhouse.config", "config/clickhouse.yaml");
-        DEFAULT_KEYS.put("greenplum.config", "config/greenplum.yaml");
-        DEFAULT_KEYS.put("postgresql.config", "config/postgresql.yaml");
+        DEFAULT_KEYS.put("normalizer.config", "config/normalizer-config.yaml");
     }
 
     private final ProjectConfig projectConfig;
@@ -40,10 +38,17 @@ public class AppConfig extends Properties {
         return taskConfig;
     }
 
+    private final NormalizerConfig normalizerConfig;
+
+    public NormalizerConfig getNormalizerConfig() {
+        return normalizerConfig;
+    }
+
     public AppConfig() throws IOException {
         this.parseConfig();
         this.projectConfig = this.parseProjectConfig(this.getProperty("project.config"));
         this.taskConfig = this.parseTaskConfig(this.getProperty("task.config"));
+        this.normalizerConfig = this.parseNormalizerConfig(this.getProperty("normalizer.config"));
     }
 
     private void parseConfig() throws IOException {
@@ -93,6 +98,14 @@ public class AppConfig extends Properties {
             return mapper.readValue(inputStream, TaskConfig.class);
         } catch (Exception e) {
             throw new RuntimeException("Failed to load TaskConfig from YAML", e);
+        }
+    }
+    private NormalizerConfig parseNormalizerConfig(String path) {
+        try (InputStream inputStream = Files.newInputStream(Paths.get(path))) {
+            ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+            return mapper.readValue(inputStream, NormalizerConfig.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load NormalizerConfig from YAML", e);
         }
     }
 }
