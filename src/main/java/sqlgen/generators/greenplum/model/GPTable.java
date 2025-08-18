@@ -13,19 +13,23 @@ public class GPTable extends Table<GPColumn> {
     public GPTable(String schemaCode, String code, String comment, List<GPColumn> columns, int lastMigrationNo) {
         super(schemaCode, code, code, columns, lastMigrationNo);
     }
+
+    public GPTable(Table<? extends Column> table) {
+        super(table);
+    }
     
     @Override
     public String getCreateScript() {
         StringBuilder sb = new StringBuilder();
-    
+
         String schema = this.getSchemaCode();
         String table = this.getCode();
         List<GPColumn> columns = this.getColumns();
-    
+
         // Вычисление максимальных длин
         int maxNameLen = 0;
         int maxTypeLen = 0;
-    
+
         for (Column col : columns) {
             if (col.getCode().length() > maxNameLen) {
                 maxNameLen = col.getCode().length();
@@ -34,53 +38,68 @@ public class GPTable extends Table<GPColumn> {
                 maxTypeLen = col.getDatatype().length();
             }
         }
-    
-        sb.append("create table if not exists ")
-          .append(schema).append('.').append(table)
-          .append(" (\n");
-    
+
+        sb.append("create table ")
+                .append(schema).append('.').append(table)
+                .append(" (\n");
+
         for (int i = 0; i < columns.size(); i++) {
             Column col = columns.get(i);
             sb.append("    ")
-              .append(String.format("%-" + maxNameLen + "s", col.getCode()))
-              .append("   ")
-              .append(String.format("%-" + maxTypeLen + "s", col.getDatatype()));
-    
+                    .append(String.format("%-" + maxNameLen + "s", col.getCode()))
+                    .append("   ")
+                    .append(String.format("%-" + maxTypeLen + "s", col.getDatatype()));
+
             if (col.isMandatory()) {
                 sb.append("   not null");
             }
-    
+
             if (col.getDefaultValue() != null) {
                 sb.append("   default ").append(col.getDefaultValue());
             }
-    
+
+            // Убираем пробелы справа
+            int len = sb.length();
+            while (len > 0 && Character.isWhitespace(sb.charAt(len - 1))) {
+                sb.deleteCharAt(len - 1);
+                len--;
+            }
+
             if (i < columns.size() - 1) {
                 sb.append(',');
             }
-    
+
             sb.append('\n');
         }
-    
-        sb.append(");\n\n");
-    
+        sb.append(")\n");
+        sb.append(
+                """
+                    with (
+                        appendonly = true,
+                        orientation = column,
+                        compresstype = zstd,
+                        compresslevel = 5
+                    )
+                    distributed by (Поле id)"""
+                ).append(";\n\n");
+
         // Комментарии
         for (Column col : columns) {
             if (col.getComment() != null && !col.getComment().isEmpty()) {
                 String safeComment = col.getComment().replace("'", "''");
                 sb.append("comment on column ")
-                  .append(schema).append('.').append(table).append('.')
-                  .append(col.getCode())
-                  .append(" is '").append(safeComment).append("';\n");
+                        .append(schema).append('.').append(table).append('.')
+                        .append(col.getCode())
+                        .append(" is '").append(safeComment).append("';\n");
             }
         }
-    
+
         // Откат
-        sb.append("\n--rollback drop table if exists ")
-          .append(schema).append('.').append(table).append(";\n");
-    
+        sb.append("\n--rollback drop table ")
+                .append(schema).append('.').append(table).append(";\n");
+
         return sb.toString();
     }
-    
 
     @Override
     public String getAddColumnsScript(List<GPColumn> columns) {
@@ -127,6 +146,4 @@ public class GPTable extends Table<GPColumn> {
     
         return sb.toString();
     }
-    
-    
 }
