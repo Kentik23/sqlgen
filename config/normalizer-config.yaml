@@ -1,4 +1,4 @@
-domains:
+clickDomains:
   - code: dAddress
     type: String
     defaultValue: null
@@ -152,3 +152,157 @@ domains:
 #  - code: "dXMLID"
 #    type:
 #    defaultValue:
+gpDomains:
+#  - code: dAddress
+#    type: String
+#    defaultValue: null
+#  - code: dAmount"
+#    type: Decimal
+#    defaultValue: "0"
+#  - code: dBoolean
+#    type: Bool
+#    defaultValue: "0"
+#  #  - code: dCalendarNumber
+#  #    type:
+#  #    defaultValue:
+#  - code: dCharValue
+#    type: String
+#    defaultValue:
+  - code: dCode
+    type: varchar(128)
+    defaultValue: "'N/D'"
+#  - code: dDataType
+#    type: String
+#    defaultValue: null
+#  - code: dDataTypeValue
+#    type: String
+#    defaultValue: null
+  - code: dDate
+    type: date
+    defaultValue: null
+#  - code: dDateTime
+#    type: DateTime
+#    defaultValue: null
+#  #  - code: dDateTimeOutTZ
+#  #    type:
+#  #    defaultValue:
+#  - code: dDescription
+#    type: String
+#    defaultValue: null
+#  - code: dDescriptionEn
+#    type: String
+#    defaultValue: null
+#  #  - code: "dEmail"
+#  #    type:
+#  #    defaultValue:
+#  #  - code: "dFile"
+#  #    type:
+#  #    defaultValue:
+#  #  - code: "dGeoCoordinate"
+#  #    type:
+#  #    defaultValue:
+#  #  - code: "dHashIdentificator"
+#  #    type:
+#  #    defaultValue:
+#  #  - code: "dHashMD5"
+#  #    type:
+#  #    defaultValue:
+#  #  - code: "dHashSHA2"
+#  #    type:
+#  #    defaultValue:
+  - code: dIdentificator
+    type: bigint
+    defaultValue: "-1"
+#  #  - code: "dIdNN"
+#  #    type:
+#  #    defaultValue:
+#  - code: "dIndicator"
+#    type: String
+#    defaultValue: "'X'"
+#  #  - code: "dINN"
+#  #    type:
+#  #    defaultValue:
+#  #  - code: "dIPAddress"
+#  #    type:
+#  #    defaultValue:
+#  #  - code: "dJson"
+#  #    type:
+#  #    defaultValue:
+#  #  - code: "dKey"
+#  #    type:
+#  #    defaultValue:
+#  #  - code: "dListOfValues"
+#  #    type:
+#  #    defaultValue:
+#  #  - code: "dMoneyCoinRub"
+#  #    type:
+#  #    defaultValue:
+#  #  - code: "dMoneyRUB"
+#  #    type:
+#  #    defaultValue:
+  - code: "dName"
+    type: varchar(256)
+    defaultValue: "'Не определено'"
+#  #  - code: "dNameEn"
+#  #    type:
+#  #    defaultValue:
+#  - code: "dNumberText"
+#    type: String
+#    defaultValue: "'N/D'"
+  - code: "dNumberValue"
+    type: decimal
+    defaultValue: null
+#  #  - code: "dOGRN"
+#  #    type:
+#  #    defaultValue:
+#  #  - code: "dOKTMO"
+#  #    type:
+#  #    defaultValue:
+#  #  - code: "dPhone"
+#  #    type:
+#  #    defaultValue:
+  - code: "dQuantity"
+    type: bigint
+    defaultValue: "0"
+#  #  - code: "dRate"
+#  #    type:
+#  #    defaultValue:
+#  #  - code: "dSortValue"
+#  #    type:
+#  #    defaultValue:
+#  #  - code: "dSysActivityId"
+#  #    type:
+#  #    defaultValue:
+  - code: "dSysDate"
+    type: timestamptz
+    defaultValue: now()
+  - code: "dSysIndicator"
+    type: varchar(1)
+    defaultValue: "'X'"
+  - code: "dSysSrcId"
+    type: bigint
+    defaultValue: "-1"
+  - code: "dSysTaskDate"
+    type: timestamptz
+    defaultValue: now()
+  - code: "dSysTaskId"
+    type: bigint
+    defaultValue: "-1"
+##  - code: "dSysVersion"
+##    type:
+##    defaultValue:
+##  - code: "dSysVersionDate"
+##    type:
+##    defaultValue:
+##  - code: "dURL"
+##    type:
+##    defaultValue:
+##  - code: "dUser"
+##    type:
+##    defaultValue:
+##  - code: "dUUID"
+##    type:
+##    defaultValue:
+##  - code: "dXMLID"
+##    type:
+##    defaultValue:

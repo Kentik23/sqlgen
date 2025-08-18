@@ -7,7 +7,13 @@
 #   actionName - краткое описание миграции
 
 #Путь к проекту
-path: "C:/Users/aleandivanov/ETL/dwh/"
+path: "C:/Users/aleandivanov/ETL/"
+
+#Относительный путь к проекту dwh
+dwhPath: "/dwh"
+
+#Относительный путь к проекту с моделями
+modelPath: "data-model/subsystem/bi/model/bi_asao.pdm"
 
 # Настройки ClickHouse
 chConfig:
