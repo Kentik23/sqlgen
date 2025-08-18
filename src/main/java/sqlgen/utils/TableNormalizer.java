@@ -1,6 +1,5 @@
 package sqlgen.utils;
 
-import sqlgen.config.AppConfig;
 import sqlgen.core.model.Domain;
 import sqlgen.parcers.pdmparcer.model.PDMColumn;
 import sqlgen.parcers.pdmparcer.model.PDMTable;
@@ -10,8 +9,8 @@ import java.util.*;
 public class TableNormalizer {
     private final List<Domain> domains;
 
-    public TableNormalizer(AppConfig appConfig) {
-        this.domains = appConfig.getNormalizerConfig().domains();
+    public TableNormalizer(List<Domain> domains) {
+        this.domains = domains;
     }
 
     private Optional<Domain> getDomain(String domainCode) {
