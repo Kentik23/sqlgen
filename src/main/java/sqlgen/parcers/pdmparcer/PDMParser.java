@@ -96,13 +96,13 @@ public class PDMParser {
                     }
 
                     String comment = getTagValue(pdmColumn, "Name");
-                    String defaultValue = getTagValue(pdmColumn, "Default");
+                    String defaultValue = getTagValue(pdmColumn, "DefaultValue");
                     String mandatory = getTagValue(pdmColumn, "Column.Mandatory");
 
                     columns.add(new PDMColumn(
                             colName,
                             type,
-                            defaultValue,
+                            defaultValue.isEmpty() ? null : defaultValue,
                             !comment.isEmpty()? comment : null,
                             mandatory.equals("1"),
                             domainCode
