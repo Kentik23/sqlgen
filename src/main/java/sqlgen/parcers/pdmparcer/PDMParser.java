@@ -6,10 +6,8 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
-import java.nio.file.Path;
 import java.util.*;
 
-import sqlgen.config.ProjectConfig;
 import sqlgen.parcers.pdmparcer.model.PDMColumn;
 import sqlgen.parcers.pdmparcer.model.PDMTable;
 
@@ -22,8 +20,7 @@ public class PDMParser {
         return "";
     }
 
-    public List<PDMTable> fillTables(ProjectConfig projectConfig, List<String> neededTables) {
-        String inputPdm = Path.of(projectConfig.path(), projectConfig.modelPath()).toString();
+    public List<PDMTable> fillTables(String inputPdm, List<String> neededTables) {
         List<PDMTable> tables = new LinkedList<>();
 
         try {
@@ -58,7 +55,9 @@ public class PDMParser {
 
                 String tableCode = getTagValue(pdmTable, "Code");
                 if (!neededTables.contains(tableCode)) continue;
+                String tableName = getTagValue(pdmTable, "Name");
                 String tableComment = getTagValue(pdmTable, "Comment");
+                tableComment = tableName + (tableComment.isEmpty() ? "" : ", " + getTagValue(pdmTable, "Comment"));
                 PDMTable table = new PDMTable(
                         tableCode,
                         tableComment
