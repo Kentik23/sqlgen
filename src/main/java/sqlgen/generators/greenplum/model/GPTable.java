@@ -111,6 +111,10 @@ public class GPTable extends Table<GPColumn> {
                 ).append(";\n\n");
 
         // Комментарии
+        String tableComment = this.getComment().replace("'", "''");
+        sb.append("comment on table ")
+                .append(schema).append('.').append(table)
+                .append(" is '").append(tableComment).append("';\n");
         for (Column col : columns) {
             if (col.getComment() != null && !col.getComment().isEmpty()) {
                 String safeComment = col.getComment().replace("'", "''");
