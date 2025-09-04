@@ -1,5 +1,6 @@
 package sqlgen.utils;
 
+import sqlgen.core.model.Column;
 import sqlgen.core.model.Domain;
 import sqlgen.parcers.pdmparcer.model.PDMColumn;
 import sqlgen.parcers.pdmparcer.model.PDMTable;
@@ -7,6 +8,17 @@ import sqlgen.parcers.pdmparcer.model.PDMTable;
 import java.util.*;
 
 public class TableNormalizer {
+    // Порядок полей (Системные поля всегда вверху)
+    private final List<String> priority = List.of(
+            "src_id",
+            "task_id",
+            "create_dttm",
+            "modify_dttm",
+            "task_dttm",
+            "eff_dttm",
+            "exp_dttm",
+            "action_ind"
+    );
     private final List<Domain> domains;
 
     public TableNormalizer(List<Domain> domains) {
@@ -33,12 +45,40 @@ public class TableNormalizer {
             throw new DomainNotFoundException("Domain \"" + domainCode + "\" not found!");
     }
 
-    public void normalize(PDMTable table) throws DomainNotFoundException {
+    public void normalize(PDMTable table, boolean applyDefault) throws DomainNotFoundException {
         List<PDMColumn> columns = table.getColumns();
         for (PDMColumn column : columns) {
-            column.setDatatype(this.getDomainType(column.getDomainCode()));
-            column.setDefaultValue(this.getDomainDefault(column.getDomainCode()));
-            column.setMandatory(column.getDefaultValue() != null && !column.getDefaultValue().isEmpty());
+            normalize(column, applyDefault);
         }
+    }
+
+    private void normalize(PDMColumn column, boolean applyDefault) throws DomainNotFoundException {
+        column.setDatatype(this.getDomainType(column.getDomainCode()));
+        /* TODO отдельная проверка для eff_dttm и exp_dttm, так как у них одинаковый домен
+        *   Планируется реализация гибкой настройки исключений*/
+        switch (column.getCode()) {
+            case "eff_dttm":
+                column.setDefaultValue("'1900-01-01 00:00:00+00'");
+                break;
+            case "exp_dttm":
+                column.setDefaultValue("'9999-12-31 00:00:00+00'");
+                break;
+            default:
+                if (applyDefault) column.setDefaultValue(this.getDomainDefault(column.getDomainCode()));
+        }
+        column.setMandatory(column.getDefaultValue() != null && !column.getDefaultValue().isEmpty());
+    }
+
+    public <C extends Column> void sort(List<C> columns) {
+        // Для быстрого поиска — мапа с индексом приоритета
+        Map<String, Integer> orderMap = new HashMap<>();
+        for (int i = 0; i < priority.size(); i++) {
+            orderMap.put(priority.get(i), i);
+        }
+
+        // Сортировка
+        columns.sort(Comparator.comparingInt(c ->
+                orderMap.getOrDefault(c.getCode(), Integer.MAX_VALUE)
+        ));
     }
 }
