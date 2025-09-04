@@ -1,27 +1,31 @@
 package sqlgen.core;
 
 import sqlgen.config.DBConfig;
+import sqlgen.config.ProjectConfig;
 import sqlgen.config.TaskConfig;
 import sqlgen.core.io.SQLFile;
 import sqlgen.core.model.Column;
 import sqlgen.core.model.Schema;
 import sqlgen.core.model.Table;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
 public class SQLGenerator {
+    private ProjectConfig projectConfig;
     private DBConfig dbConfig;
     private TaskConfig taskConfig;
-
-    public SQLGenerator(DBConfig dbConfig, TaskConfig taskConfig) {
+    public SQLGenerator(ProjectConfig projectConfig, DBConfig dbConfig, TaskConfig taskConfig) throws IOException {
+        this.projectConfig = projectConfig;
         this.dbConfig = dbConfig;
         this.taskConfig = taskConfig;
     }
 
-    protected String buildFilePath(String template, String schema, String table) {
+    protected String buildFilePath(String template, String dbType, String database, String schema, String table) {
         return template
-                .replace("{schemePath}", dbConfig.schemePath())
+                .replace("{dbType}", dbType)
+                .replace("{database}", database)
                 .replace("{scheme}", schema)
                 .replace("{table}", table);
     }
@@ -39,6 +43,14 @@ public class SQLGenerator {
                 .replace("{taskNo}", taskConfig.taskNo())
                 .replace("{migrationNo}", migrationNo)
                 .replace("{actionName}", actionName);
+    }
+
+    public ProjectConfig getProjectConfig() {
+        return projectConfig;
+    }
+
+    public void setProjectConfig(ProjectConfig projectConfig) {
+        this.projectConfig = projectConfig;
     }
 
     public DBConfig getDbConfig() {
@@ -66,7 +78,7 @@ public class SQLGenerator {
         String temp = s.replace(sub, "");
         int occ = (s.length() - temp.length()) / sub.length();
 
-        String changelogName = this.generateFileName(dbConfig.changelogNameTemplate(), dbConfig.changelogNoFormat(), occ, actionName);
+        String changelogName = this.generateFileName(projectConfig.changelogNameTemplate(), projectConfig.changelogNoFormat(), occ, actionName);
 
         masterContent.append(
                 "\n- include:\n" +
@@ -75,7 +87,7 @@ public class SQLGenerator {
         );
         SQLFile newMaster = new SQLFile(master.getRelativePath(), masterContent.toString());
 
-        String logicalFilePath = dbConfig.changelogPath() + "/tasks/" + changelogName;
+        String logicalFilePath = buildFilePath(projectConfig.changelogPathTemplate(), dbConfig.dbType(), dbConfig.database(), "", "") + "/tasks/" + changelogName;
 
 
         StringBuilder content = new StringBuilder();
@@ -99,14 +111,14 @@ public class SQLGenerator {
         for (Schema<? extends Table<? extends Column>> schema : schemas) {
             for (Table<? extends Column> table : schema.getTables()) {
                 String filename = generateFileName(
-                        dbConfig.migrationNameConfig().fileNameTemplate(),
-                        dbConfig.migrationNameConfig().migrationNoFormat(),
+                        projectConfig.migrationNameConfig().fileNameTemplate(),
+                        projectConfig.migrationNameConfig().migrationNoFormat(),
                         table.getLastMigrationNo(),
                         "create-table"
                 );
                 sqlFiles.add(
                         new SQLFile(
-                                this.buildFilePath(dbConfig.tableMigrationPathTemplate(), schema.getCode(), table.getCode())
+                                this.buildFilePath(projectConfig.tableMigrationPathTemplate(), dbConfig.dbType(), dbConfig.database(), schema.getCode(), table.getCode())
                                         + filename,
                                 this.wrapSql(filename, table.getCreateScript())
                         )
@@ -123,14 +135,14 @@ public class SQLGenerator {
         for (Schema<? extends Table<C>> schema : schemas) {
             for (Table<C> table : schema.getTables()) {
                 String filename = generateFileName(
-                        dbConfig.migrationNameConfig().fileNameTemplate(),
-                        dbConfig.migrationNameConfig().migrationNoFormat(),
+                        projectConfig.migrationNameConfig().fileNameTemplate(),
+                        projectConfig.migrationNameConfig().migrationNoFormat(),
                         table.getLastMigrationNo(),
                         "add-column"
                 );
                 sqlFiles.add(
                         new SQLFile(
-                                this.buildFilePath(dbConfig.tableMigrationPathTemplate(), schema.getCode(), table.getCode())
+                                this.buildFilePath(projectConfig.tableMigrationPathTemplate(), dbConfig.dbType(), dbConfig.database(), schema.getCode(), table.getCode())
                                         + filename,
                                 this.wrapSql(filename, table.getAddColumnsScript(columns))
                         )
@@ -143,13 +155,13 @@ public class SQLGenerator {
 
     public SQLFile addPartition(Table<? extends Column> table, String value, String partitionName) {
         String filename = generateFileName(
-                dbConfig.migrationNameConfig().fileNameTemplate(),
-                dbConfig.migrationNameConfig().migrationNoFormat(),
+                projectConfig.migrationNameConfig().fileNameTemplate(),
+                projectConfig.migrationNameConfig().migrationNoFormat(),
                 table.getLastMigrationNo(),
                 "add_partition"
         );
         return new SQLFile(
-                this.buildFilePath(dbConfig.tableMigrationPathTemplate(), table.getSchemaCode(), table.getCode())
+                this.buildFilePath(projectConfig.tableMigrationPathTemplate(), dbConfig.dbType(), dbConfig.database(), table.getSchemaCode(), table.getCode())
                         + filename,
                 this.wrapSql(filename, table.getCreatePartitionScript(partitionName, List.of(value)))
         );
@@ -161,14 +173,14 @@ public class SQLGenerator {
         for (Schema<? extends Table<C>> schema : schemas) {
             for (Table<C> table : schema.getTables()) {
                 String filename = generateFileName(
-                        dbConfig.migrationNameConfig().fileNameTemplate(),
-                        dbConfig.migrationNameConfig().migrationNoFormat(),
+                        projectConfig.migrationNameConfig().fileNameTemplate(),
+                        projectConfig.migrationNameConfig().migrationNoFormat(),
                         table.getLastMigrationNo(),
                         "drop_column"
                 );
                 sqlFiles.add(
                         new SQLFile(
-                                this.buildFilePath(dbConfig.tableMigrationPathTemplate(), schema.getCode(), table.getCode())
+                                this.buildFilePath(projectConfig.tableMigrationPathTemplate(), dbConfig.dbType(), dbConfig.database(), schema.getCode(), table.getCode())
                                         + filename,
                                 this.wrapSql(filename, table.getDropColumnsScript(columns))
                         )

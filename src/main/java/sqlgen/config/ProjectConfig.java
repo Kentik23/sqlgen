@@ -1,11 +1,16 @@
 package sqlgen.config;
 
+import java.util.List;
+
 public record ProjectConfig(
     String path,
     String dwhPath,
     String modelPath,
     String name,
-    DBConfig chConfig,
-    DBConfig pgConfig,
-    DBConfig gpConfig
+    String tableMigrationPathTemplate,
+    MigrationNameConfig migrationNameConfig,
+    String changelogPathTemplate,
+    String changelogNameTemplate,
+    String changelogNoFormat,
+    List<DBConfig> databases
 ) { }

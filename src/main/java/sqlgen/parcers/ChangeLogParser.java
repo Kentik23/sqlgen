@@ -1,7 +1,7 @@
 package sqlgen.parcers;
 
-import sqlgen.config.AppConfig;
 import sqlgen.config.DBConfig;
+import sqlgen.config.ProjectConfig;
 import sqlgen.core.io.SQLFile;
 
 import java.io.IOException;
@@ -9,17 +9,26 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class ChangeLogParser {
-    public static SQLFile getMasterChangeLog(AppConfig appConfig, DBConfig dbConfig) {
+    protected static String buildChangeLogPath(String template, String dbType, String database) {
+        return template
+                .replace("{dbType}", dbType)
+                .replace("{database}", database);
+    }
+
+    public static SQLFile getMasterChangeLog(ProjectConfig projectConfig, DBConfig dbConfig) {
         String masterContent = null;
         try {
             masterContent = Files.readString(Path.of(
-                    appConfig.getProjectConfig().path(),appConfig.getProjectConfig().dwhPath(), dbConfig.changelogPath(), "master.yaml"
+                    projectConfig.path(),
+                    projectConfig.dwhPath(),
+                    buildChangeLogPath(projectConfig.changelogPathTemplate(), dbConfig.dbType(), dbConfig.database()),
+                    "master.yaml"
             ));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         SQLFile master = new SQLFile(
-                Path.of(dbConfig.changelogPath(), "master.yaml").toString(),
+                Path.of(buildChangeLogPath(projectConfig.changelogPathTemplate(), dbConfig.dbType(), dbConfig.database()), "master.yaml").toString(),
                 masterContent);
         return master;
     }
