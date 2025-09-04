@@ -146,4 +146,50 @@ public class GPTable extends Table<GPColumn> {
     
         return sb.toString();
     }
+
+    @Override
+    public String getDropColumnsScript(List<GPColumn> columns) {
+        StringBuilder sb = new StringBuilder();
+
+        String schema = this.getSchemaCode();
+        String table = this.getCode();
+
+        for (GPColumn column : columns) {
+            // основной alter table на удаление
+            sb.append("alter table ")
+                    .append(schema).append('.').append(table)
+                    .append(" drop column ")
+                    .append(column.getCode())
+                    .append(";\n");
+
+            // rollback: возвращаем колонку обратно
+            sb.append("--rollback alter table ")
+                    .append(schema).append('.').append(table)
+                    .append(" add column ")
+                    .append(column.getCode()).append(' ')
+                    .append(column.getDatatype());
+
+            if (column.isMandatory()) {
+                sb.append(" not null");
+            }
+
+            if (column.getDefaultValue() != null) {
+                sb.append(" default ").append(column.getDefaultValue());
+            }
+
+            sb.append(";\n");
+
+            if (column.getComment() != null && !column.getComment().isEmpty()) {
+                String safeComment = column.getComment().replace("'", "''");
+                sb.append("--rollback comment on column ")
+                        .append(schema).append('.').append(table).append('.')
+                        .append(column.getCode())
+                        .append(" is '").append(safeComment).append("';\n");
+            }
+
+            sb.append('\n');
+        }
+
+        return sb.toString();
+    }
 }

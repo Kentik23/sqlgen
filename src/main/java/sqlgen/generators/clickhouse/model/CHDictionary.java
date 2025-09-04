@@ -105,4 +105,9 @@ public class CHDictionary extends Table<CHColumn> {
         // Словари не поддерживают ALTER ADD COLUMN
         return "";
     }
+
+    @Override
+    public String getDropColumnsScript(List<CHColumn> columns) {
+        return "";
+    }
 }

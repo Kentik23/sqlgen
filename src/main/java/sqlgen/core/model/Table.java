@@ -64,6 +64,8 @@ public abstract class Table<C extends Column> {
 
     public abstract String getAddColumnsScript(List<C> columns);
 
+    public abstract String getDropColumnsScript(List<C> columns);
+
     public String getSchemaCode() {
         return schemaCode;
     }

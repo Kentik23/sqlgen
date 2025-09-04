@@ -29,4 +29,9 @@ public class PDMTable extends Table<PDMColumn> {
         throw new UnsupportedOperationException("Unimplemented method 'getAddColumnsScript'");
     }
 
+    @Override
+    public String getDropColumnsScript(List<PDMColumn> columns) {
+        return "";
+    }
+
 }

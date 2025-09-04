@@ -140,4 +140,28 @@ public class SQLGenerator {
 
         return sqlFiles;
     }
+
+    public <C extends Column> List<SQLFile> dropColumns(List<Schema<? extends Table<C>>> schemas, List<C> columns) {
+        List<SQLFile> sqlFiles = new LinkedList<>();
+
+        for (Schema<? extends Table<C>> schema : schemas) {
+            for (Table<C> table : schema.getTables()) {
+                String filename = generateFileName(
+                        dbConfig.migrationNameConfig().fileNameTemplate(),
+                        dbConfig.migrationNameConfig().migrationNoFormat(),
+                        table.getLastMigrationNo(),
+                        "drop_column"
+                );
+                sqlFiles.add(
+                        new SQLFile(
+                                this.buildFilePath(dbConfig.tableMigrationPathTemplate(), schema.getCode(), table.getCode())
+                                        + filename,
+                                this.wrapSql(filename, table.getDropColumnsScript(columns))
+                        )
+                );
+            }
+        }
+
+        return sqlFiles;
+    }
 }

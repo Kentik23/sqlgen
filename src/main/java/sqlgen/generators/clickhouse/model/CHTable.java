@@ -170,6 +170,11 @@ public class CHTable extends Table<CHColumn> {
         return sb.toString();
     }
 
+    @Override
+    public String getDropColumnsScript(List<CHColumn> columns) {
+        return "";
+    }
+
     public void setWithDistributed(boolean withDistributed) {
         this.withDistributed = withDistributed;
     }
