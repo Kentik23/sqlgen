@@ -17,6 +17,33 @@ public class GPTable extends Table<GPColumn> {
     public GPTable(Table<? extends Column> table) {
         super(table);
     }
+
+    @Override
+    public String getCreatePartitionScript(String partitionName, List<String> values) {
+        StringBuilder sb = new StringBuilder();
+
+        // полное имя таблицы
+        String fullTableName = getSchemaCode() + "." + getCode();
+
+        // add partition
+        sb.append("alter table ")
+                .append(fullTableName)
+                .append(" add partition ")
+                .append(partitionName)
+                .append(" values (")
+                .append(String.join(", ", values))
+                .append(") with (appendonly = true, orientation = column, compresstype = zstd, compresslevel = 5);\n");
+
+        // rollback: только drop partition
+        sb.append("-- rollback alter table ")
+                .append(fullTableName)
+                .append(" drop partition ")
+                .append(partitionName)
+                .append(";\n");
+
+        return sb.toString();
+    }
+
     
     @Override
     public String getCreateScript() {

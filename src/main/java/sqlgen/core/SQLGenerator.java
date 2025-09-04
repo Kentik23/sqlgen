@@ -141,6 +141,20 @@ public class SQLGenerator {
         return sqlFiles;
     }
 
+    public SQLFile addPartition(Table<? extends Column> table, String value, String partitionName) {
+        String filename = generateFileName(
+                dbConfig.migrationNameConfig().fileNameTemplate(),
+                dbConfig.migrationNameConfig().migrationNoFormat(),
+                table.getLastMigrationNo(),
+                "add_partition"
+        );
+        return new SQLFile(
+                this.buildFilePath(dbConfig.tableMigrationPathTemplate(), table.getSchemaCode(), table.getCode())
+                        + filename,
+                this.wrapSql(filename, table.getCreatePartitionScript(partitionName, List.of(value)))
+        );
+    }
+
     public <C extends Column> List<SQLFile> dropColumns(List<Schema<? extends Table<C>>> schemas, List<C> columns) {
         List<SQLFile> sqlFiles = new LinkedList<>();
 

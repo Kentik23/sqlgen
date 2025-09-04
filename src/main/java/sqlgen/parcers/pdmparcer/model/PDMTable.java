@@ -30,6 +30,11 @@ public class PDMTable extends Table<PDMColumn> {
     }
 
     @Override
+    public String getCreatePartitionScript(String partitionName, List<String> values) {
+        return "";
+    }
+
+    @Override
     public String getDropColumnsScript(List<PDMColumn> columns) {
         return "";
     }

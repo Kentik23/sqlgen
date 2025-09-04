@@ -107,6 +107,11 @@ public class CHDictionary extends Table<CHColumn> {
     }
 
     @Override
+    public String getCreatePartitionScript(String partitionName, List<String> values) {
+        return "";
+    }
+
+    @Override
     public String getDropColumnsScript(List<CHColumn> columns) {
         return "";
     }
