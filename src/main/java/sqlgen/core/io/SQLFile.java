@@ -14,7 +14,7 @@ public class SQLFile {
     }
 
     public SQLFile(Path file, Path root) throws IOException {
-        this.relativePath = root.relativize(file).toString(); // относительный путь от root
+        this.relativePath = root.relativize(file).toString().replace("\\", "/"); // относительный путь от root
         this.content = Files.readString(file); // читаем всё содержимое в String
     }
 
