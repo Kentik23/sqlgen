@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class ChangeLogParser {
+public class ChangelogParser {
     protected static String buildChangeLogPath(String template, String dbType, String database) {
         return template
                 .replace("{dbType}", dbType)
