@@ -8,8 +8,9 @@ public record ProjectConfig(
     String modelPath,
     String name,
     String tableMigrationPathTemplate,
-    MigrationNameConfig migrationNameConfig,
     String changelogPathTemplate,
+    String databasePathTemplate,
+    MigrationNameConfig migrationNameConfig,
     String changelogNameTemplate,
     String changelogNoFormat,
     List<DBConfig> databases
