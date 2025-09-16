@@ -107,7 +107,7 @@ public class CHTable extends Table<CHColumn> {
         // Роллбэк
         sb.append("--rollback drop table ")
                 .append(database).append('.').append(table)
-                .append(" on cluster main;\n");
+                .append(" on cluster main sync;\n");
 
         // Distributed-таблица
         if (isWithDistributed()) {
@@ -119,7 +119,7 @@ public class CHTable extends Table<CHColumn> {
                     .append(table).append("', rand());\n\n");
 
             sb.append("--rollback drop table ")
-                    .append(database).append('.').append(table).append("_distributed on cluster main;\n");
+                    .append(database).append('.').append(table).append("_distributed on cluster main sync;\n");
         }
 
         return sb.toString();
