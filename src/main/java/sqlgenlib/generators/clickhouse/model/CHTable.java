@@ -1,7 +1,7 @@
-package sqlgen.generators.clickhouse.model;
+package sqlgenlib.generators.clickhouse.model;
 
-import sqlgen.core.model.Column;
-import sqlgen.core.model.Table;
+import sqlgenlib.core.model.Column;
+import sqlgenlib.core.model.Table;
 
 import java.util.List;
 
