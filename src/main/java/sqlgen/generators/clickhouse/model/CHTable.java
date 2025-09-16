@@ -54,7 +54,7 @@ public class CHTable extends Table<CHColumn> {
             maxDefaultLen = Math.max(maxDefaultLen, defaultLen);
         }
 
-        sb.append("create table if not exists ")
+        sb.append("create table ")
                 .append(database).append('.').append(table)
                 .append(" on cluster main (\n");
 
@@ -105,20 +105,20 @@ public class CHTable extends Table<CHColumn> {
         sb.append(";\n\n");
 
         // Роллбэк
-        sb.append("--rollback drop table if exists ")
+        sb.append("--rollback drop table ")
                 .append(database).append('.').append(table)
                 .append(" on cluster main;\n");
 
         // Distributed-таблица
         if (isWithDistributed()) {
-            sb.append("\ncreate table if not exists ")
+            sb.append("\ncreate table ")
                     .append(database).append('.').append(table).append("_distributed on cluster main\n")
                     .append("as ").append(database).append('.').append(table).append('\n')
                     .append("engine = Distributed('main', '")
                     .append(database).append("', '")
                     .append(table).append("', rand());\n\n");
 
-            sb.append("--rollback drop table if exists ")
+            sb.append("--rollback drop table ")
                     .append(database).append('.').append(table).append("_distributed on cluster main;\n");
         }
 
