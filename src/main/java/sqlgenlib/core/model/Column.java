@@ -7,13 +7,15 @@ public class Column {
     private String defaultValue;
     private String comment;
     private boolean mandatory;
+    private boolean primary;
 
-    public Column(String code, String datatype, String defaultValue, String comment, boolean mandatory) {
+    public Column(String code, String datatype, String defaultValue, String comment, boolean mandatory, boolean primary) {
         this.code = code;
         this.datatype = datatype;
         this.defaultValue = defaultValue;
         this.comment = comment;
         this.mandatory = mandatory;
+        this.primary = primary;
     }
 
     public Column(Column column) {
@@ -22,6 +24,15 @@ public class Column {
         this.defaultValue = column.getDefaultValue();
         this.comment = column.getComment();
         this.mandatory = column.isMandatory();
+        this.primary = column.isPrimary();
+    }
+
+    public boolean isPrimary() {
+        return primary;
+    }
+
+    public void setPrimary(boolean primary) {
+        this.primary = primary;
     }
 
     public String getCode() {

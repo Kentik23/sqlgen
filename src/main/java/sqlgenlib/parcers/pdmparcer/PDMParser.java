@@ -104,7 +104,8 @@ public class PDMParser {
                             defaultValue.isEmpty() ? null : defaultValue,
                             !comment.isEmpty()? comment : null,
                             mandatory.equals("1"),
-                            domainCode
+                            domainCode,
+                            false
                     ));
                 }
 

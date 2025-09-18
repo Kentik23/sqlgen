@@ -5,8 +5,8 @@ import sqlgenlib.core.model.Column;
 public class PDMColumn extends Column {
     private String domainCode;
 
-    public PDMColumn(String code, String datatype, String defaultValue, String comment, boolean mandatory, String domainCode) {
-        super(code, datatype, defaultValue, comment, mandatory);
+    public PDMColumn(String code, String datatype, String defaultValue, String comment, boolean mandatory, String domainCode, boolean primary) {
+        super(code, datatype, defaultValue, comment, mandatory, primary);
         this.domainCode = domainCode;
     }
 

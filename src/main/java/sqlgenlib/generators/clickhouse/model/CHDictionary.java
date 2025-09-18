@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CHDictionary extends Table<CHColumn> {
-
-    private CHColumn primaryKey;
     private String sourceDatabase;
     private String sourceTable;
 
@@ -19,23 +17,12 @@ public class CHDictionary extends Table<CHColumn> {
             String comment,
             List<CHColumn> columns,
             int lastMigrationNo,
-            CHColumn primaryKey,
             String sourceDatabase,
             String sourceTable
     ) {
         super(schemaCode, code, comment, new ArrayList<>(columns), lastMigrationNo);
-        this.getColumns().addFirst(primaryKey);
-        this.primaryKey = primaryKey;
         this.sourceDatabase = sourceDatabase;
         this.sourceTable = sourceTable;
-    }
-
-    public CHColumn getPrimaryKey() {
-        return primaryKey;
-    }
-
-    public void setPrimaryKey(CHColumn primaryKey) {
-        this.primaryKey = primaryKey;
     }
 
     public String getSourceDatabase() {
@@ -67,7 +54,7 @@ public class CHDictionary extends Table<CHColumn> {
                 .append(" on cluster main\n(\n");
 
         for (int i = 0; i < columns.size(); i++) {
-            sqlgenlib.core.model.Column col = columns.get(i);
+            CHColumn col = columns.get(i);
             sb.append("    ")
                     .append(col.getCode()).append(' ')
                     .append(col.getDatatype());
@@ -79,9 +66,8 @@ public class CHDictionary extends Table<CHColumn> {
 
         sb.append(")\n");
 
-        if (primaryKey != null) {
-            sb.append("primary key ").append(primaryKey.getCode()).append('\n');
-        }
+        columns.stream().filter(CHColumn::isPrimary).findFirst()
+                .ifPresent(chColumn -> sb.append("primary key ").append(chColumn.getCode()).append('\n'));
 
         sb.append("source(clickhouse(DB '")
                 .append(sourceDatabase)
