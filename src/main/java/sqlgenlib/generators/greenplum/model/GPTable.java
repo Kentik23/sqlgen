@@ -134,6 +134,11 @@ public class GPTable extends Table<GPColumn> {
     }
 
     @Override
+    public String getReinitScript(Table<GPColumn> oldTable) {
+        return "";
+    }
+
+    @Override
     public String getAddColumnsScript(List<GPColumn> columns) {
         StringBuilder sb = new StringBuilder();
     

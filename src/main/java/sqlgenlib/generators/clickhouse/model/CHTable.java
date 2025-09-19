@@ -127,6 +127,11 @@ public class CHTable extends Table<CHColumn> {
     }
 
     @Override
+    public String getReinitScript(Table<CHColumn> oldTable) {
+        return "";
+    }
+
+    @Override
     public String getAddColumnsScript(List<CHColumn> columns) {
         StringBuilder sb = new StringBuilder();
 

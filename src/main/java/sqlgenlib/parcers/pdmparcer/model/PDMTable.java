@@ -30,6 +30,11 @@ public class PDMTable extends Table<PDMColumn> {
     }
 
     @Override
+    public String getReinitScript(Table<PDMColumn> oldTable) {
+        return "";
+    }
+
+    @Override
     public String getAddColumnsScript(List<PDMColumn> columns) {
         throw new UnsupportedOperationException("Unimplemented method 'getAddColumnsScript'");
     }

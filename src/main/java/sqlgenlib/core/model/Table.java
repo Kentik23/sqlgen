@@ -62,6 +62,8 @@ public abstract class Table<C extends Column> {
 
     public abstract String getCreateScript();
 
+    public abstract String getReinitScript(Table<C> oldTable);
+
     public abstract String getAddColumnsScript(List<C> columns);
 
     public abstract String getCreatePartitionScript(String partitionName, List<String> values);
