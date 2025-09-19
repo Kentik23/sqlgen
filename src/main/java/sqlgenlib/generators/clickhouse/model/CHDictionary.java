@@ -86,6 +86,28 @@ public class CHDictionary extends Table<CHColumn> {
     }
 
     @Override
+    public CHDictionary copy() {
+        // копируем колонки
+        List<CHColumn> copiedColumns = new ArrayList<>();
+        for (CHColumn col : getColumns()) {
+            copiedColumns.add(col.copy()); // предполагаем, что у CHColumn есть метод copy()
+        }
+
+        // создаём новый объект CHDictionary с теми же значениями
+        CHDictionary copy = new CHDictionary(
+                getSchemaCode(),
+                getCode(),
+                getComment(),
+                copiedColumns,
+                getLastMigrationNo(),
+                sourceDatabase,
+                sourceTable
+        );
+
+        return copy;
+    }
+
+    @Override
     public String getAddColumnsScript(List<CHColumn> columns) {
         // Словари не поддерживают ALTER ADD COLUMN
         return "";

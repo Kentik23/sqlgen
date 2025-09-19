@@ -17,4 +17,18 @@ public class PDMColumn extends Column {
     public void setDomainCode(String domainCode) {
         this.domainCode = domainCode;
     }
+
+
+    @Override
+    public PDMColumn copy() {
+        return new PDMColumn(
+                getCode(),
+                getDatatype(),
+                getDefaultValue(),
+                getComment(),
+                isMandatory(),
+                getDomainCode(),
+                isPrimary()
+        );
+    }
 }

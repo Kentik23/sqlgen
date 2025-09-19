@@ -9,4 +9,16 @@ public class CHColumn extends Column {
     public CHColumn(Column column) {
         super(column);
     }
+
+    @Override
+    public CHColumn copy() {
+        return new CHColumn(
+                getCode(),
+                getDatatype(),
+                getDefaultValue(),
+                getComment(),
+                isMandatory(),
+                isPrimary()
+        );
+    }
 }

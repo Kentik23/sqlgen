@@ -75,4 +75,6 @@ public abstract class Table<C extends Column> {
     public void setSchemaCode(String schemaCode) {
         this.schemaCode = schemaCode;
     }
+
+    public abstract Table<C> copy();
 }

@@ -3,6 +3,7 @@ package sqlgenlib.generators.greenplum.model;
 import sqlgenlib.core.model.Column;
 import sqlgenlib.core.model.Table;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GPTable extends Table<GPColumn> {
@@ -222,5 +223,21 @@ public class GPTable extends Table<GPColumn> {
         }
 
         return sb.toString();
+    }
+
+    @Override
+    public GPTable copy() {
+        List<GPColumn> copiedColumns = new ArrayList<>();
+        for (GPColumn col : getColumns()) {
+            copiedColumns.add(col.copy());
+        }
+
+        return new GPTable(
+                getSchemaCode(),
+                getCode(),
+                getComment(),
+                copiedColumns,
+                getLastMigrationNo()
+        );
     }
 }

@@ -9,4 +9,16 @@ public class GPColumn extends Column {
     public GPColumn(Column column) {
         super(column);
     }
+
+    @Override
+    public GPColumn copy() {
+        return new GPColumn(
+                getCode(),
+                getDatatype(),
+                getDefaultValue(),
+                getComment(),
+                isMandatory(),
+                isPrimary()
+        );
+    }
 }

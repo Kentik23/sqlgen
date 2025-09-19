@@ -3,6 +3,7 @@ package sqlgenlib.generators.clickhouse.model;
 import sqlgenlib.core.model.Column;
 import sqlgenlib.core.model.Table;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CHTable extends Table<CHColumn> {
@@ -178,6 +179,23 @@ public class CHTable extends Table<CHColumn> {
     @Override
     public String getDropColumnsScript(List<CHColumn> columns) {
         return "";
+    }
+
+    @Override
+    public CHTable copy() {
+        List<CHColumn> copiedColumns = new ArrayList<>();
+        for (CHColumn col : getColumns()) {
+            copiedColumns.add(col.copy());
+        }
+
+        return new CHTable(
+                getSchemaCode(),
+                getCode(),
+                getComment(),
+                copiedColumns,
+                getLastMigrationNo(),
+                isWithDistributed()
+        );
     }
 
     public void setWithDistributed(boolean withDistributed) {

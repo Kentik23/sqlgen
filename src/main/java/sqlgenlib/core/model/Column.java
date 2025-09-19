@@ -74,4 +74,15 @@ public class Column {
     public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
     }
+
+    public Column copy() {
+        return new Column(
+                getCode(),
+                getDatatype(),
+                getDefaultValue(),
+                getComment(),
+                isMandatory(),
+                isPrimary()
+        );
+    }
 }
