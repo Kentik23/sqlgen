@@ -57,7 +57,7 @@ public class PDMParser {
                 if (!neededTables.contains(tableCode)) continue;
                 String tableName = getTagValue(pdmTable, "Name");
                 String tableComment = getTagValue(pdmTable, "Comment");
-                tableComment = tableName + (tableComment.isEmpty() ? "" : ", " + getTagValue(pdmTable, "Comment"));
+                tableComment = tableComment.isEmpty() ? tableName : tableComment;
                 PDMTable table = new PDMTable(
                         tableCode,
                         tableComment
@@ -111,6 +111,7 @@ public class PDMParser {
 
                 table.setColumns(columns);
                 tables.add(table);
+                if (table.getComment().equals(columns.getFirst().getComment())) table.setComment(null);
             }
 
         } catch (Exception e) {
