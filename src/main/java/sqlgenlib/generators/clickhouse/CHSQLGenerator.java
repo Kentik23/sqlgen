@@ -5,6 +5,7 @@ import sqlgenlib.config.ProjectConfig;
 import sqlgenlib.config.TaskConfig;
 import sqlgenlib.core.SQLGenerator;
 import sqlgenlib.core.io.SQLFile;
+import sqlgenlib.generators.clickhouse.model.CHDictionary;
 import sqlgenlib.generators.clickhouse.model.CHSchema;
 import sqlgenlib.generators.clickhouse.model.CHTable;
 
@@ -30,7 +31,7 @@ public class CHSQLGenerator extends SQLGenerator {
                 );
                 sqlFiles.add(
                         new SQLFile(
-                                this.buildFilePath(getProjectConfig().tableMigrationPathTemplate(), getDbConfig().dbType(), getDbConfig().database(), schema.getCode(), table.getCode())
+                                this.buildFilePath(getProjectConfig().tableMigrationPathTemplate().replace("/tables", ""), getDbConfig().dbType(), getDbConfig().database(), schema.getCode(), table.getCode())
                                         + filename,
                                 this.wrapSql(filename, table.getCreateScript())
                         )
@@ -39,5 +40,20 @@ public class CHSQLGenerator extends SQLGenerator {
         }
 
         return sqlFiles;
+    }
+
+    public SQLFile reinitDictionary(CHDictionary dictionary, CHDictionary oldDictionary) {
+
+        String filename = generateFileName(
+                getProjectConfig().migrationNameConfig().fileNameTemplate(),
+                getProjectConfig().migrationNameConfig().migrationNoFormat(),
+                dictionary.getLastMigrationNo(),
+                "reinit-dictionary"
+        );
+        return new SQLFile(
+                this.buildFilePath(getProjectConfig().tableMigrationPathTemplate().replace("/tables", ""), getDbConfig().dbType(), getDbConfig().database(), dictionary.getSchemaCode(), dictionary.getCode())
+                        + filename,
+                this.wrapSql(filename, dictionary.getReinitScript(oldDictionary))
+        );
     }
 }
