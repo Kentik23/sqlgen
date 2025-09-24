@@ -30,6 +30,7 @@ public class TableNormalizer {
     }
 
     private String getDomainType(String domainCode) throws DomainNotFoundException {
+        if (domainCode == null || domainCode.equals("null")) return null;
         Optional<Domain> domain = getDomain(domainCode);
         if (domain.isPresent())
             return domain.get().type();
@@ -38,6 +39,7 @@ public class TableNormalizer {
     }
 
     private String getDomainDefault(String domainCode) throws DomainNotFoundException {
+        if (domainCode == null || domainCode.equals("null")) return null;
         Optional<Domain> domain = getDomain(domainCode);
         if (domain.isPresent())
             return domain.get().defaultValue();
