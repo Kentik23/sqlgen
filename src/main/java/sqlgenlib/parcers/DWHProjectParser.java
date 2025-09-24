@@ -4,6 +4,8 @@ import sqlgenlib.config.DBConfig;
 import sqlgenlib.config.ProjectConfig;
 import sqlgenlib.config.TaskConfig;
 import sqlgenlib.core.io.SQLFile;
+import sqlgenlib.core.model.Column;
+import sqlgenlib.core.model.Table;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -34,5 +36,15 @@ public class DWHProjectParser {
             }
         });
         return list;
+    }
+
+    public static <T extends Table<? extends Column>> T getTable(
+            MigrationFilesSearcher migrationFilesSearcher,
+            TableMigrationParser<T> tableMigrationParser,
+            String schemeCode,
+            String tableCode
+    ) throws IOException {
+        List<SQLFile> sqlFiles = migrationFilesSearcher.getSQLFiles(schemeCode, tableCode);
+        return tableMigrationParser.parseTable(sqlFiles);
     }
 }
