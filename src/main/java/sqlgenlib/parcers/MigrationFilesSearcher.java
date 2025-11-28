@@ -10,8 +10,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MigrationFilesSearcher {
     public ProjectConfig getProjectConfig() {
@@ -40,6 +42,21 @@ public class MigrationFilesSearcher {
             }
         });
         return sqlFiles;
+    }
+
+    public List<String> getTableNames(String schemaCode) {
+        Path startDir = Path.of(projectConfig.path(), projectConfig.dwhPath(), fillTemplate(getPathTemplate(), dbConfig, schemaCode, ""));
+
+        try {
+            return Files.list(startDir)
+                    .filter(Files::isDirectory)
+                    .map(path -> path.getFileName().toString())
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            // Обработка ошибок - можно вернуть пустой список или выбросить исключение
+            System.err.println("Ошибка при чтении директории: " + startDir + " - " + e.getMessage());
+            return List.of(); // возвращаем пустой список в случае ошибки
+        }
     }
 
     public String getPathTemplate() {

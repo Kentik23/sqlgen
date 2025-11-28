@@ -7,6 +7,7 @@ import sqlgenlib.core.io.SQLFile;
 import sqlgenlib.core.model.Column;
 import sqlgenlib.core.model.Schema;
 import sqlgenlib.core.model.Table;
+import sqlgenlib.utils.TemplateBuilder;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -78,7 +79,11 @@ public class SQLGenerator {
         String temp = s.replace(sub, "");
         int occ = (s.length() - temp.length()) / sub.length();
 
-        String changelogName = this.generateFileName(projectConfig.changelogNameTemplate(), projectConfig.changelogNoFormat(), occ, actionName);
+        String changelogName = TemplateBuilder.from(projectConfig.migrationNameConfig().fileNameTemplate())
+                .with("migrationNo", String.format(projectConfig.migrationNameConfig().migrationNoFormat(), occ + 1))
+                .with("actionName", "create-table")
+                .with("taskNo", taskConfig.taskNo())
+                .build();
 
         masterContent.append(
                 "\n- include:\n" +
@@ -105,89 +110,89 @@ public class SQLGenerator {
         sqlFiles.add(changeLog);
     }
 
-    public List<SQLFile> createTables(List<Schema<? extends Table<? extends Column>>> schemas) {
-        List<SQLFile> sqlFiles = new LinkedList<>();
+//    public List<SQLFile> createTables(List<Schema<? extends Table<? extends Column>>> schemas) {
+//        List<SQLFile> sqlFiles = new LinkedList<>();
+//
+//        for (Schema<? extends Table<? extends Column>> schema : schemas) {
+//            for (Table<? extends Column> table : schema.getTables()) {
+//                String filename = generateFileName(
+//                        projectConfig.migrationNameConfig().fileNameTemplate(),
+//                        projectConfig.migrationNameConfig().migrationNoFormat(),
+//                        table.getLastMigrationNo(),
+//                        "create-table"
+//                );
+//                sqlFiles.add(
+//                        new SQLFile(
+//                                this.buildFilePath(projectConfig.tableMigrationPathTemplate(), dbConfig.dbType(), dbConfig.database(), schema.getCode(), table.getCode())
+//                                        + filename,
+//                                this.wrapSql(filename, table.getCreateScript())
+//                        )
+//                );
+//            }
+//        }
+//
+//        return sqlFiles;
+//    }
 
-        for (Schema<? extends Table<? extends Column>> schema : schemas) {
-            for (Table<? extends Column> table : schema.getTables()) {
-                String filename = generateFileName(
-                        projectConfig.migrationNameConfig().fileNameTemplate(),
-                        projectConfig.migrationNameConfig().migrationNoFormat(),
-                        table.getLastMigrationNo(),
-                        "create-table"
-                );
-                sqlFiles.add(
-                        new SQLFile(
-                                this.buildFilePath(projectConfig.tableMigrationPathTemplate(), dbConfig.dbType(), dbConfig.database(), schema.getCode(), table.getCode())
-                                        + filename,
-                                this.wrapSql(filename, table.getCreateScript())
-                        )
-                );
-            }
-        }
-
-        return sqlFiles;
-    }
-
-    public <C extends Column> List<SQLFile> addColumns(List<Schema<? extends Table<C>>> schemas, List<C> columns) {
-        List<SQLFile> sqlFiles = new LinkedList<>();
-
-        for (Schema<? extends Table<C>> schema : schemas) {
-            for (Table<C> table : schema.getTables()) {
-                String filename = generateFileName(
-                        projectConfig.migrationNameConfig().fileNameTemplate(),
-                        projectConfig.migrationNameConfig().migrationNoFormat(),
-                        table.getLastMigrationNo(),
-                        "add-column"
-                );
-                sqlFiles.add(
-                        new SQLFile(
-                                this.buildFilePath(projectConfig.tableMigrationPathTemplate(), dbConfig.dbType(), dbConfig.database(), schema.getCode(), table.getCode())
-                                        + filename,
-                                this.wrapSql(filename, table.getAddColumnsScript(columns))
-                        )
-                );
-            }
-        }
-
-        return sqlFiles;
-    }
-
-    public SQLFile addPartition(Table<? extends Column> table, String value, String partitionName) {
-        String filename = generateFileName(
-                projectConfig.migrationNameConfig().fileNameTemplate(),
-                projectConfig.migrationNameConfig().migrationNoFormat(),
-                table.getLastMigrationNo(),
-                "add_partition"
-        );
-        return new SQLFile(
-                this.buildFilePath(projectConfig.tableMigrationPathTemplate(), dbConfig.dbType(), dbConfig.database(), table.getSchemaCode(), table.getCode())
-                        + filename,
-                this.wrapSql(filename, table.getCreatePartitionScript(partitionName, List.of(value)))
-        );
-    }
-
-    public <C extends Column> List<SQLFile> dropColumns(List<Schema<? extends Table<C>>> schemas, List<C> columns) {
-        List<SQLFile> sqlFiles = new LinkedList<>();
-
-        for (Schema<? extends Table<C>> schema : schemas) {
-            for (Table<C> table : schema.getTables()) {
-                String filename = generateFileName(
-                        projectConfig.migrationNameConfig().fileNameTemplate(),
-                        projectConfig.migrationNameConfig().migrationNoFormat(),
-                        table.getLastMigrationNo(),
-                        "drop_column"
-                );
-                sqlFiles.add(
-                        new SQLFile(
-                                this.buildFilePath(projectConfig.tableMigrationPathTemplate(), dbConfig.dbType(), dbConfig.database(), schema.getCode(), table.getCode())
-                                        + filename,
-                                this.wrapSql(filename, table.getDropColumnsScript(columns))
-                        )
-                );
-            }
-        }
-
-        return sqlFiles;
-    }
+//    public <C extends Column> List<SQLFile> addColumns(List<Schema<? extends Table<C>>> schemas, List<C> columns) {
+//        List<SQLFile> sqlFiles = new LinkedList<>();
+//
+//        for (Schema<? extends Table<C>> schema : schemas) {
+//            for (Table<C> table : schema.getTables()) {
+//                String filename = generateFileName(
+//                        projectConfig.migrationNameConfig().fileNameTemplate(),
+//                        projectConfig.migrationNameConfig().migrationNoFormat(),
+//                        table.getLastMigrationNo(),
+//                        "add-column"
+//                );
+//                sqlFiles.add(
+//                        new SQLFile(
+//                                this.buildFilePath(projectConfig.tableMigrationPathTemplate(), dbConfig.dbType(), dbConfig.database(), schema.getCode(), table.getCode())
+//                                        + filename,
+//                                this.wrapSql(filename, table.getAddColumnsScript(columns))
+//                        )
+//                );
+//            }
+//        }
+//
+//        return sqlFiles;
+//    }
+//
+//    public SQLFile addPartition(Table<? extends Column> table, String value, String partitionName) {
+//        String filename = generateFileName(
+//                projectConfig.migrationNameConfig().fileNameTemplate(),
+//                projectConfig.migrationNameConfig().migrationNoFormat(),
+//                table.getLastMigrationNo(),
+//                "add_partition"
+//        );
+//        return new SQLFile(
+//                this.buildFilePath(projectConfig.tableMigrationPathTemplate(), dbConfig.dbType(), dbConfig.database(), table.getSchemaCode(), table.getCode())
+//                        + filename,
+//                this.wrapSql(filename, table.getCreatePartitionScript(partitionName, List.of(value)))
+//        );
+//    }
+//
+//    public <C extends Column> List<SQLFile> dropColumns(List<Schema<? extends Table<C>>> schemas, List<C> columns) {
+//        List<SQLFile> sqlFiles = new LinkedList<>();
+//
+//        for (Schema<? extends Table<C>> schema : schemas) {
+//            for (Table<C> table : schema.getTables()) {
+//                String filename = generateFileName(
+//                        projectConfig.migrationNameConfig().fileNameTemplate(),
+//                        projectConfig.migrationNameConfig().migrationNoFormat(),
+//                        table.getLastMigrationNo(),
+//                        "drop_column"
+//                );
+//                sqlFiles.add(
+//                        new SQLFile(
+//                                this.buildFilePath(projectConfig.tableMigrationPathTemplate(), dbConfig.dbType(), dbConfig.database(), schema.getCode(), table.getCode())
+//                                        + filename,
+//                                this.wrapSql(filename, table.getDropColumnsScript(columns))
+//                        )
+//                );
+//            }
+//        }
+//
+//        return sqlFiles;
+//    }
 }

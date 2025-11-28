@@ -1,0 +1,43 @@
+# Основные переменные, используемые в шаблонах:
+#   database - название базы
+#   scheme - название схемы
+#   table - название таблицы
+#   migrationNo - порядковый номер миграции
+#   taskNo - номер задания (Настраивается в task-config.yaml)
+#   actionName - краткое описание миграции
+
+#Путь к проекту
+path: "C:/Users/aleandivanov/pautina/"
+
+#Относительный путь к проекту dwh
+dwhPath: "/dwh"
+
+#Относительный путь к проекту с моделями
+modelPath: "/dwh/model/"
+
+# Шаблон пути до файла миграции таблицы (Можно указать database, scheme, table)
+# относительно корня проекта
+tableMigrationPathTemplate: "src/main/{dbType}/databases/{database}/schemas/{scheme}/tables/{table}/"
+# Путь до папки с changelogs относительно проекта
+changelogPathTemplate: "src/main/{dbType}/databases/{database}/_changelogs"
+# Путь до базы данных
+databasePathTemplate: "src/main/{dbType}/databases/{database}"
+
+# Настройки шаблона названия миграции
+migrationNameConfig:
+  # Шаблон названия миграции (Можно указать migrationNo, taskNo, actionName)
+  fileNameTemplate: "{taskNo}.yaml"
+  # Формат номера миграции
+  migrationNoFormat: "%d-0-0"
+
+# Шаблон названия changelog (Можно указать migrationNo, taskNo, actionName)
+changelogNameTemplate: "{migrationNo}-{actionName}-{taskNo}.yaml"
+
+# Формат номера миграции
+changelogNoFormat: "%d"
+
+# Настройки баз данных
+databases:
+- database: "default"
+  #Тип базы данных
+  dbType: "ch"

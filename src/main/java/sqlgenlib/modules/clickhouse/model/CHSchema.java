@@ -1,4 +1,4 @@
-//package sqlgenlib.generators.clickhouse.model;
+//package sqlgenlib.modules.clickhouse.model;
 //
 //import sqlgenlib.core.model.Schema;
 //

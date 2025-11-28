@@ -2,7 +2,7 @@ package sqlgenlib.core.model;
 
 import java.util.List;
 
-public abstract class Table<C extends Column> {
+public abstract class Table <C extends Column> {
     private String schemaCode;
     private String code;
     private String comment;
@@ -59,16 +59,6 @@ public abstract class Table<C extends Column> {
     public void setLastMigrationNo(int lastMigrationNo) {
         this.lastMigrationNo = lastMigrationNo;
     }
-
-    public abstract String getCreateScript();
-
-    public abstract String getReinitScript(Table<C> oldTable);
-
-    public abstract String getAddColumnsScript(List<C> columns);
-
-    public abstract String getCreatePartitionScript(String partitionName, List<String> values);
-
-    public abstract String getDropColumnsScript(List<C> columns);
 
     public String getSchemaCode() {
         return schemaCode;
