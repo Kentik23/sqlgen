@@ -1,4 +1,4 @@
-package sqlgenlib.utils;
+/*package sqlgenlib.utils;
 
 import sqlgenlib.generators.clickhouse.model.CHColumn;
 import sqlgenlib.generators.clickhouse.model.CHTable;
@@ -34,4 +34,4 @@ public class TableConverter {
 
         return gpTable;
     }
-}
+}*/

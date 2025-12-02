@@ -1,9 +1,9 @@
 package sqlgenlib;
 
-import sqlgenlib.generators.greenplum.model.GPTable;
+//import sqlgenlib.generators.greenplum.model.GPTable;
 
 public class GPSQLFileGenerator {
-    public String getCreateTableScript(GPTable table) {
-        return "";
-    };
+    //public String getCreateTableScript(GPTable table) {
+        //return "";
+   // };
 }

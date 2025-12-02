@@ -1,4 +1,4 @@
-package sqlgenlib.utils;
+/*package sqlgenlib.utils;
 
 import sqlgenlib.core.model.Column;
 import sqlgenlib.core.model.Domain;
@@ -56,8 +56,8 @@ public class TableNormalizer {
 
     private void normalize(PDMColumn column, boolean applyDefault) throws DomainNotFoundException {
         column.setDatatype(this.getDomainType(column.getDomainCode()));
-        /* TODO отдельная проверка для eff_dttm и exp_dttm, так как у них одинаковый домен
-        *   Планируется реализация гибкой настройки исключений*/
+        *//* TODO отдельная проверка для eff_dttm и exp_dttm, так как у них одинаковый домен
+        *   Планируется реализация гибкой настройки исключений*//*
         switch (column.getCode()) {
             case "eff_dttm":
                 column.setDefaultValue("'1900-01-01 00:00:00+00'");
@@ -83,4 +83,4 @@ public class TableNormalizer {
                 orderMap.getOrDefault(c.getCode(), Integer.MAX_VALUE)
         ));
     }
-}
+}*/
