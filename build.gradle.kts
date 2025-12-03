@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("org.openjfx.javafxplugin") version "0.0.13"
     application
 }
 
@@ -18,9 +19,14 @@ dependencies {
 }
 
 application {
-    mainClass.set("sqlgenlib.examples.ChangelogGenerator")
+    mainClass.set("sqlgenclient.Main")
 }
 
 tasks.test {
     useJUnitPlatform()
+}
+
+javafx {
+    version = "11.0.2"
+    modules = listOf("javafx.controls")
 }
