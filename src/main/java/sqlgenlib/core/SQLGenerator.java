@@ -4,13 +4,11 @@ import sqlgenlib.config.DBConfig;
 import sqlgenlib.config.ProjectConfig;
 import sqlgenlib.config.TaskConfig;
 import sqlgenlib.core.io.SQLFile;
-import sqlgenlib.core.model.Column;
-import sqlgenlib.core.model.Schema;
-import sqlgenlib.core.model.Table;
+import sqlgenlib.modules.clickhouse.model.CHColumn;
+import sqlgenlib.modules.clickhouse.model.Dictionary;
 import sqlgenlib.utils.TemplateBuilder;
 
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 
 public class SQLGenerator {
@@ -79,8 +77,8 @@ public class SQLGenerator {
         String temp = s.replace(sub, "");
         int occ = (s.length() - temp.length()) / sub.length();
 
-        String changelogName = TemplateBuilder.from(projectConfig.migrationNameConfig().fileNameTemplate())
-                .with("migrationNo", String.format(projectConfig.migrationNameConfig().migrationNoFormat(), occ + 1))
+        String changelogName = TemplateBuilder.from(projectConfig.changelogNameTemplate())
+                .with("migrationNo", String.format(projectConfig.changelogNoFormat(), occ + 1))
                 .with("actionName", "create-table")
                 .with("taskNo", taskConfig.taskNo())
                 .build();
@@ -108,6 +106,120 @@ public class SQLGenerator {
 
         sqlFiles.add(newMaster);
         sqlFiles.add(changeLog);
+    }
+
+    public SQLFile reinitDictionary (Dictionary dict) {
+        StringBuilder sb = new StringBuilder();
+
+        Dictionary oldDict = new Dictionary(dict);
+
+        String schema = dict.getSchemaCode();
+        String dictName = dict.getCode();
+        List<CHColumn> columns = dict.getColumns();
+
+        // Drop dictionary (текущий)
+        sb.append("drop dictionary ")
+                .append(schema).append('.').append(dictName)
+                .append(" on cluster main sync;\n\n");
+
+        // Create or replace dictionary (текущий)
+        sb.append("create dictionary ")
+                .append(schema).append('.').append(dictName)
+                .append(" on cluster main\n(\n");
+
+        for (int i = 0; i < columns.size(); i++) {
+            CHColumn col = columns.get(i);
+            sb.append("    ")
+                    .append(col.getCode()).append(' ')
+                    .append(col.getDatatype());
+
+            if (col.getComment() != null && !col.getComment().isBlank()) {
+                sb.append(" comment '").append(col.getComment().replace("'", "''")).append("'");
+            }
+
+            if (i < columns.size() - 1) {
+                sb.append(',');
+            }
+            sb.append('\n');
+        }
+
+        sb.append(")\n");
+
+        columns.stream().filter(CHColumn::isPrimary).findFirst()
+                .ifPresent(chColumn -> sb.append("primary key ").append(chColumn.getCode()).append('\n'));
+
+        sb.append("source(clickhouse(DB '")
+                .append(dict.getSourceDatabase())
+                .append("' table '")
+                .append(dict.getSourceTable())
+                .append("'))\n")
+                .append("layout(hashed())\n")
+                .append("lifetime(14400)");
+
+        if (dict.getComment() != null && !dict.getComment().isBlank()) {
+            sb.append("\ncomment '").append(dict.getComment().replace("'", "''")).append("'");
+        }
+
+        sb.append(";\n\n");
+
+        // ---------- Rollback block (СТАРЫЙ словарь) ----------
+        sb.append("--rollback drop dictionary ")
+                .append(schema).append('.').append(dictName)
+                .append(" on cluster main sync;\n");
+
+        sb.append("--rollback create dictionary ")
+                .append(schema).append('.').append(dictName)
+                .append(" on cluster main\n")
+                .append("--rollback (\n");
+
+        List<CHColumn> oldColumns = oldDict.getColumns();
+        for (int i = 0; i < oldColumns.size(); i++) {
+            CHColumn col = oldColumns.get(i);
+            sb.append("--rollback     ")
+                    .append(col.getCode()).append(' ')
+                    .append(col.getDatatype());
+
+            if (col.getComment() != null && !col.getComment().isBlank()) {
+                sb.append(" comment '").append(col.getComment().replace("'", "''")).append("'");
+            }
+
+            if (i < oldColumns.size() - 1) {
+                sb.append(',');
+            }
+            sb.append('\n');
+        }
+
+        sb.append("--rollback )\n");
+
+        oldColumns.stream().filter(CHColumn::isPrimary).findFirst()
+                .ifPresent(chColumn -> sb.append("--rollback primary key ").append(chColumn.getCode()).append('\n'));
+
+        sb.append("--rollback source(clickhouse(user '${CH_CICD_USER}' password '${CH_CICD_PASSWORD}' DB '")
+                .append(oldDict.getSourceDatabase())
+                .append("' table '")
+                .append(oldDict.getSourceTable())
+                .append("'))\n")
+                .append("--rollback layout(hashed())\n")
+                .append("--rollback lifetime(14400)");
+
+        if (oldDict.getComment() != null && !oldDict.getComment().isBlank()) {
+            sb.append("\n--rollback comment '").append(oldDict.getComment().replace("'", "''")).append("'");
+        }
+
+        sb.append(";\n");
+
+        String filename = generateFileName(
+                projectConfig.migrationNameConfig().fileNameTemplate(),
+                projectConfig.migrationNameConfig().migrationNoFormat(),
+                dict.getLastMigrationNo(),
+                "reinit-dictionary"
+        );
+
+        return new SQLFile(
+                this.buildFilePath(projectConfig.tableMigrationPathTemplate(), dbConfig.dbType(), dbConfig.database(), schema, dictName)
+                        + filename,
+                this.wrapSql(filename, sb.toString())
+        );
     }
 
 //    public List<SQLFile> createTables(List<Schema<? extends Table<? extends Column>>> schemas) {

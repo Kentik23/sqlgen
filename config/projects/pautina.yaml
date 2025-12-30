@@ -17,7 +17,7 @@ modelPath: "/dwh/model/"
 
 # Шаблон пути до файла миграции таблицы (Можно указать database, scheme, table)
 # относительно корня проекта
-tableMigrationPathTemplate: "src/main/{dbType}/databases/{database}/schemas/{scheme}/tables/{table}/"
+tableMigrationPathTemplate: "src/main/{dbType}/databases/{database}/schemas/{scheme}/{table}/"
 # Путь до папки с changelogs относительно проекта
 changelogPathTemplate: "src/main/{dbType}/databases/{database}/_changelogs"
 # Путь до базы данных
@@ -26,12 +26,12 @@ databasePathTemplate: "src/main/{dbType}/databases/{database}"
 # Настройки шаблона названия миграции
 migrationNameConfig:
   # Шаблон названия миграции (Можно указать migrationNo, taskNo, actionName)
-  fileNameTemplate: "{taskNo}.yaml"
+  fileNameTemplate: "{migrationNo}-CD-{taskNo}-{actionName}.sql"
   # Формат номера миграции
   migrationNoFormat: "%d-0-0"
 
 # Шаблон названия changelog (Можно указать migrationNo, taskNo, actionName)
-changelogNameTemplate: "{migrationNo}-{actionName}-{taskNo}.yaml"
+changelogNameTemplate: "{taskNo}.yaml"
 
 # Формат номера миграции
 changelogNoFormat: "%d"
