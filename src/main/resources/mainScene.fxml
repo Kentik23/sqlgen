@@ -2,166 +2,31 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.text.Font?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="sqlgenclient.controllers.MainSceneController"
-            style="-fx-background-color: #f5f5f5;">
-
-    <!-- Верхняя панель - заголовок и управление -->
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="sqlgenclient.controllers.MainSceneController">
     <top>
-        <VBox spacing="10" style="-fx-background-color: #2c3e50; -fx-padding: 15;">
-            <Label text="SQL Generator - DAG Manager"
-                   style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
-
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <Button text="📁 Открыть директорию"
-                        style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold;"
-                        fx:id="openDirButton"/>
-                <Label text="Текущая директория: Не выбрана"
-                       style="-fx-text-fill: #ecf0f1;"
-                       fx:id="currentDirLabel"/>
-            </HBox>
-        </VBox>
+        <AnchorPane>
+            <Button fx:id="settingsButton" text="Settings" onAction="#openSettings" AnchorPane.rightAnchor="10" />
+        </AnchorPane>
     </top>
+    <left>
 
-    <!-- Центральная часть -->
+    </left>
     <center>
-        <SplitPane dividerPositions="0.3" style="-fx-background-color: transparent;">
-
-            <!-- Левая панель - навигация по DAG -->
-            <VBox spacing="10" style="-fx-padding: 15; -fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 0 1 0 0;">
-                <Label text="Структура DAG"
-                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-
-                <!-- Поиск по DAG -->
-                <TextField promptText="🔍 Поиск DAG..."
-                           style="-fx-background-radius: 5;"
-                           fx:id="searchField"/>
-
-                <!-- Иерархическое дерево DAG - БЕЗ предзаполнения -->
-                <TreeView fx:id="dagTreeView"
-                          style="-fx-background-color: #f9f9f9;"
-                          VBox.vgrow="ALWAYS"/>
-
-                <!-- Информация о выбранном элементе -->
-                <VBox spacing="5" style="-fx-padding: 10; -fx-background-color: #ecf0f1; -fx-background-radius: 5;">
-                    <Label text="Выбрано: " fx:id="selectedItemLabel"
-                           style="-fx-font-weight: bold;"/>
-                    <Label text="Тип: -" fx:id="itemTypeLabel"/>
-                    <Label text="Путь: -" fx:id="itemPathLabel"/>
-                </VBox>
+        <SplitPane dividerPositions="0.3">
+            <VBox>
+                <Label text="Структура проекта"/>
             </VBox>
-
-            <!-- Правая панель - информация о DAG -->
-            <VBox spacing="15" style="-fx-padding: 15;">
-                <HBox spacing="10" alignment="CENTER_LEFT">
-                    <Label text="Информация о DAG"
-                           style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-                    <Button text="🔄 Обновить"
-                            style="-fx-background-color: #27ae60; -fx-text-fill: white;"
-                            fx:id="refreshButton"/>
-                    <Button text="⚙️ Настроить"
-                            style="-fx-background-color: #f39c12; -fx-text-fill: white;"
-                            fx:id="configureButton"/>
-                </HBox>
-
-                <!-- Вкладки с разной информацией о DAG -->
-                <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-                    <Tab text="Основное">
-                        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
-                            <VBox spacing="10" style="-fx-padding: 10;">
-                                <GridPane hgap="10" vgap="10">
-                                    <Label text="Название DAG:" GridPane.rowIndex="0" GridPane.columnIndex="0"
-                                           style="-fx-font-weight: bold;"/>
-                                    <Label text="Не выбрано" GridPane.rowIndex="0" GridPane.columnIndex="1"
-                                           fx:id="dagNameLabel"/>
-
-                                    <Label text="Расписание:" GridPane.rowIndex="1" GridPane.columnIndex="0"
-                                           style="-fx-font-weight: bold;"/>
-                                    <Label text="-" GridPane.rowIndex="1" GridPane.columnIndex="1"
-                                           fx:id="dagScheduleLabel"/>
-
-                                    <Label text="Владелец:" GridPane.rowIndex="2" GridPane.columnIndex="0"
-                                           style="-fx-font-weight: bold;"/>
-                                    <Label text="-" GridPane.rowIndex="2" GridPane.columnIndex="1"
-                                           fx:id="dagOwnerLabel"/>
-
-                                    <Label text="Последний запуск:" GridPane.rowIndex="3" GridPane.columnIndex="0"
-                                           style="-fx-font-weight: bold;"/>
-                                    <Label text="-" GridPane.rowIndex="3" GridPane.columnIndex="1"
-                                           fx:id="lastRunLabel"/>
-                                </GridPane>
-                            </VBox>
-                        </ScrollPane>
-                    </Tab>
-
-                    <Tab text="Задачи (Tasks)">
-                        <VBox spacing="10" style="-fx-padding: 10;">
-                            <TableView fx:id="tasksTableView" style="-fx-background-color: white;" VBox.vgrow="ALWAYS">
-                                <columns>
-                                    <TableColumn text="Задача" prefWidth="150"/>
-                                    <TableColumn text="Оператор" prefWidth="150"/>
-                                    <TableColumn text="Статус" prefWidth="100"/>
-                                    <TableColumn text="Зависимости" prefWidth="200"/>
-                                </columns>
-                            </TableView>
-                        </VBox>
-                    </Tab>
-
-                    <Tab text="SQL Код">
-                        <VBox spacing="10" style="-fx-padding: 10;">
-                            <HBox spacing="10" alignment="CENTER_LEFT">
-                                <Button text="📋 Копировать"
-                                        style="-fx-background-color: #3498db; -fx-text-fill: white;"
-                                        fx:id="copySqlButton"/>
-                                <Button text="💾 Сохранить"
-                                        style="-fx-background-color: #27ae60; -fx-text-fill: white;"
-                                        fx:id="saveSqlButton"/>
-                            </HBox>
-                            <TextArea fx:id="sqlCodeTextArea"
-                                      style="-fx-font-family: 'Monospaced'; -fx-font-size: 12px;"
-                                      promptText="Здесь будет отображаться SQL код DAG..."
-                                      VBox.vgrow="ALWAYS"/>
-                        </VBox>
-                    </Tab>
-
-                    <Tab text="Логи и метрики">
-                        <VBox spacing="10" style="-fx-padding: 10;">
-                            <HBox spacing="10">
-                                <Button text="Показать логи"
-                                        style="-fx-background-color: #7f8c8d; -fx-text-fill: white;"
-                                        fx:id="showLogsButton"/>
-                                <Button text="Метрики выполнения"
-                                        style="-fx-background-color: #9b59b6; -fx-text-fill: white;"
-                                        fx:id="showMetricsButton"/>
-                            </HBox>
-                            <TextArea promptText="Логи выполнения будут отображаться здесь..."
-                                      style="-fx-font-family: 'Monospaced';"
-                                      VBox.vgrow="ALWAYS"/>
-                        </VBox>
-                    </Tab>
-                </TabPane>
+            <VBox>
+                <Label text="Генерация ченджлога"/>
             </VBox>
         </SplitPane>
     </center>
-
-    <!-- Нижняя панель - статусная строка -->
     <bottom>
-        <HBox style="-fx-background-color: #34495e; -fx-padding: 8;" spacing="10">
-            <Label text="Статус: Готов" fx:id="statusLabel"
-                   style="-fx-text-fill: white;"/>
-            <Separator orientation="VERTICAL" style="-fx-background-color: #7f8c8d;"/>
-            <Label text="Всего DAG: 0" fx:id="totalDagsLabel"
-                   style="-fx-text-fill: white;"/>
-            <Separator orientation="VERTICAL" style="-fx-background-color: #7f8c8d;"/>
-            <Label text="Выбрано: 0" fx:id="selectedCountLabel"
-                   style="-fx-text-fill: white;"/>
-            <Pane HBox.hgrow="ALWAYS"/>
-            <Label text="Версия 1.0.0" style="-fx-text-fill: #bdc3c7;"/>
+        <HBox>
+            <Button> 
         </HBox>
     </bottom>
-
 </BorderPane>
